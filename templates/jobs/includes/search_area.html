@@ -1,0 +1,149 @@
+
+<form autocomplete="off"  action="." method="GET">
+    <div id='search_app' class="catagory_area">
+        <div class="container">
+            <div class="row cat_search">
+                    <div class="col-lg-3 col-md-4">
+                        <div class="single_input" style="position:relative">
+                            <input id="term" name="fname" class="form-control" type="text" v-model="selection" placeholder="Search keyword"
+                                @focus="focus = true"
+                                @blur="focus = false"
+                                @keydown.enter = 'enter'
+                                @keydown.down = 'down'
+                                @keydown.up = 'up'
+                                @input = 'change'      
+                            />
+                            <ul v-if="focus" class="dropdown-menu" v-bind:class="{'show':openSuggestion}" style="width:100%">
+                                <li v-for="(skill, index) in suggestions"
+                                    class="dropdown-item"
+                                    style="cursor: pointer"
+                                    v-bind:class="{'active': isActive(index)}"
+                                    @click="suggestionClick(index)"
+                                >
+                                    <a>[[ skill.title ]]</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <search-select :suggestions="locations" input_name="location" placeholder_value="Location"></search-select>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <search-select :suggestions="categories" input_name="category" placeholder_value="Category"></search-select>
+                    </div>
+                    <div class="col-lg-3 col-md-12">
+                        <div type class="job_btn">
+                            <button type="submit" class="boxed-btn3 w-100">Find Job</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="popular_search d-flex align-items-center">
+                            <span>Popular Search:</span>
+                            <ul>
+                                <li v-for="(category, index) in categories"><a href="#">[[category.title]]</a></li>
+                                <!-- <li><a href="#">Design & Creative</a></li>
+                                <li><a href="#">Marketing</a></li>
+                                <li><a href="#">Administration</a></li>
+                                <li><a href="#">Teaching & Education</a></li>
+                                <li><a href="#">Engineering</a></li>
+                                <li><a href="#">Software & Web</a></li>
+                                <li><a href="#">Telemarketing</a></li> -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+</form>
+
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- production version, optimized for size and speed -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+{% include './search_select.vue.html' %}
+
+<script>
+    var locations = {{ locations_json|safe }};
+    var categories = {{ categories_json|safe }};
+
+    axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+
+
+    var app = new Vue({
+    delimiters: ['[[', ']]'],
+    el: '#search_app',
+    
+    data() {
+        return {
+            selection: '',
+            open: false,
+            current: 0,
+            timeoutHandle: false,
+            focus: false,
+            locations: locations,
+            categories: categories,
+        }
+    },
+    computed: {
+        openSuggestion() {
+            return this.selection !== "" &&
+                    this.suggestions.length != 0 &&
+                    this.open === true;
+        }
+    },
+    methods: {
+        isActive(index) {
+            return index === this.current;
+        },
+        up() {
+            if(this.current > 0)
+                this.current--;
+        },
+        down() {
+            if(this.current < this.suggestions.length - 1)
+                this.current++;
+        },
+        enter() {
+            this.selection = this.suggestions[this.current].title;
+            this.open = false;
+        },
+        change() {
+            if (this.open == false) {
+                this.open = true;
+                this.current = 0;
+            }
+            if(this.timeoutHandle){
+                clearTimeout(this.timeoutHandle);
+                this.timeoutHandle = false;
+            }
+            this.timeoutHandle = setTimeout(function () {
+                axios({
+                method: 'get',
+                url: '/api/v1/jobs/',
+                })
+                .then(function (response) {
+                    //handle success
+                    app.suggestions = response.data;
+                    console.log(response.data)
+                })
+                .catch(function (response) {
+                    //handle error
+                    console.log(response);
+                });
+            }, 1000);
+
+        },
+        suggestionClick(index) {
+            this.selection = this.suggestions[index].title;
+            this.open = false;
+        },
+    }
+    });
+
+</script>

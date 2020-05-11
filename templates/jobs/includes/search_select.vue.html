@@ -1,0 +1,115 @@
+<script>
+  Vue.component('SearchSelect', {
+    template: '#my-template',
+    delimiters: ['[[', ']]'],
+    props: {
+      suggestions: {
+        type: Array,
+        required: true,
+      },
+      placeholder_value: {
+        type: String,
+        required: true,
+      },
+      input_name: {
+        type: String,
+        required: true,
+      }
+    }, // declare the props
+    data() {
+      return {
+        selection: '',
+        open: false,
+        current: 0,
+        timeoutHandle: false,
+        showMenu: false,
+      }
+    },
+    mounted: function(){
+      console.log(this.placeholder_value)
+    },
+    computed: {
+      matches() {
+        console.log("matches executing")
+          return this.suggestions.filter((sg) => {
+              return sg.title.toLowerCase().indexOf(this.selection.toLowerCase()) >= 0;
+          });
+      },
+      openSuggestion() {
+          return this.matches.length != 0 &&
+                 this.open === true;
+      }
+    },
+    methods: {
+      isActive(index) {
+        return index === this.current;
+      },
+      up() {
+        if(this.current > 0)
+            this.current--;
+      },
+      down() {
+        if(this.current < this.matches.length - 1)
+            this.current++;
+      },
+      enter(e) {
+        e.preventDefault();
+        this.selection = this.matches[this.current].title;
+        this.open = false;
+      },
+      change() {
+        if (this.open == false) {
+            this.open = true;
+            this.current = 0;
+        }
+      },
+      focus() {
+        if (this.open == false) {
+            this.open = true;
+            this.current = 0;
+        }
+      },
+      blur() {
+        if (this.open == true) {
+            this.open = false;
+            this.current = 0;
+
+            if (!this.matches.find(el=> el.title.toLowerCase() == this.selection.toLowerCase())) {
+              this.selection = '';
+            }
+        }
+      },
+      suggestionClick(index) {
+          this.selection = this.matches[index].title;
+          this.open = false;
+      },
+    },
+  })
+  
+</script>
+
+<script type="text/x-template" id="my-template">
+  <div class="single_input" :class="input_name" style="position:relative">
+
+    <input :name="input_name" class="form-control" type="text" v-model="selection" :placeholder="placeholder_value"
+      @keydown.down   = 'down'
+      @keydown.up     = 'up'
+      @keydown.enter  = 'enter'
+      @input          = 'change'
+      @blur           = 'blur'
+      @focus          = 'focus'
+    />
+    <ul class="dropdown-menu mt-2" :class="{'show':openSuggestion}" style="width:100%">
+      <li v-for         ="(suggestion, index) in matches"
+          class         ="dropdown-item"
+          style         ="cursor: pointer"
+          v-bind:class  ="{'active': isActive(index)}"
+          @mousedown    ="suggestionClick(index)"
+      >
+          <a>[[ suggestion.title ]]</a>
+      </li>
+    </ul>
+
+  </div>
+</script>
+  
