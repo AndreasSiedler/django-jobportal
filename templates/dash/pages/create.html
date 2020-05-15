@@ -8,6 +8,9 @@
 {% endblock %} -->
 
 {% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
 
 <div class="page-inner">
     <div class="page-header">
@@ -68,7 +71,35 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-12">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="location">Location</label>
+                                    <!-- <input id="location" name="location" type="text" class="form-control" value="{{ form.location.value|default_if_none:'' }}" placeholder="Enter Location">
+                                    <select id="location" name="location" placeholder="Choose location" class="form-control select2">
+                                        {% for choice in form.location.field.choices %}
+                                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                        {% endfor %}
+                                    </select> -->
+
+                                    <select class="selectpicker" data-show-subtext="true" data-live-search="true">
+                                        <option data-subtext="Rep California">Tom Foolery</option>
+                                        <option data-subtext="Sen California">Bill Gordon</option>
+                                        <option data-subtext="Sen Massacusetts">Elizabeth Warren</option>
+                                        <option data-subtext="Rep Alabama">Mario Flores</option>
+                                        <option data-subtext="Rep Alaska">Don Young</option>
+                                        <option data-subtext="Rep California" disabled="disabled">Marvin Martinez</option>
+                                      </select>
+
+                                    {% for error in form.location.errors %}
+                                    <div class="alert alert-danger alert-dismissable">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                        <strong>{{ error|escape }}</strong>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- <div class="col-lg-12">
                                 <div class="form-group">
                                     <label for="salary">Salary(Leave empty if it's negotiable)</label>
                                     <input id="salary" name="salary" type="number" min="1000" class="form-control" value="{{ form.salary.value|default_if_none:'' }}">
@@ -79,26 +110,13 @@
                                     </div>
                                     {% endfor %}
                                 </div>
-                            </div>
+                            </div> -->
 
-                            <div class="col-lg-6">
-                                <div class="form-group">
-                                    <label for="location">Location</label>
-                                    <input id="location" name="location" type="text" class="form-control" value="{{ form.location.value|default_if_none:'' }}" placeholder="Enter Location">
-                                    {% for error in form.location.errors %}
-                                    <div class="alert alert-danger alert-dismissable">
-                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                        <strong>{{ error|escape }}</strong>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
 
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <label for="type">Type</label>
-                                    <select id="type" name="type" placeholder="Choose job type"
-                                            class="form-control select2">
+                                    <select class="form-control select2" id="type" name="type" placeholder="Choose job type">
                                         <option value="1" {% if form.type.value == "1" %} selected {% endif %}>Full time</option>
                                         <option value="2" {% if form.type.value == "2" %} selected {% endif %}>Part time</option>
                                         <option value="3" {% if form.type.value == "3" %} selected {% endif %}>Internship</option>
@@ -229,5 +247,6 @@
         </div>
     </div>
 </div>
+
 
 {% endblock %}

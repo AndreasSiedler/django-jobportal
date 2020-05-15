@@ -8,7 +8,6 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.shortcuts import render
 import json
 
-from ..documents import JobDocument
 from ..forms import ApplyJobForm
 from ..models import Job, Applicant, Location, Category
 
