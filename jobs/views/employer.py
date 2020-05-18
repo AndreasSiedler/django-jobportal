@@ -10,21 +10,21 @@ from django.template import loader
 
 
 from jobs.decorators import user_is_employer
-from jobs.forms import CreateJobForm, AddSkillForm
+from jobs.forms import CreateJobForm
 from jobs.models import Job, Applicant
 
 
-class SkillAddView(UpdateView):
-    template_name = 'jobs/add_skill.html'
-    form_class = AddSkillForm
-    extra_context = {
-        'title': 'Add Skill'
-    }
-    success_url = reverse_lazy('jobs:employer-dashboard')
+# class SkillAddView(UpdateView):
+#     template_name = 'jobs/add_skill.html'
+#     form_class = AddSkillForm
+#     extra_context = {
+#         'title': 'Add Skill'
+#     }
+#     success_url = reverse_lazy('jobs:employer-dashboard')
 
-    def get_object(self):
-        id_ = self.kwargs.get('id')
-        return get_object_or_404(Job, id=id_)
+#     def get_object(self):
+#         id_ = self.kwargs.get('id')
+#         return get_object_or_404(Job, id=id_)
 
 
 
