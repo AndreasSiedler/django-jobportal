@@ -89,7 +89,7 @@ class JobDeleteView(DeleteView):
 
 
 class JobCreateView(CreateView):
-    template_name = 'dash/pages/create.html'
+    template_name = 'dash/pages/create-job.html'
     form_class = CreateJobForm
     extra_context = {
         'title': 'Post New Job'
