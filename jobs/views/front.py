@@ -21,12 +21,12 @@ def home_view(request):
     context['categories_json']  = json.dumps(categories)
     context['trendings'] = Job.objects.filter(created_at__month=timezone.now().month)[:7]
 
-    return render(request, 'jobs/home.html', context)
+    return render(request, 'front/home.html', context)
 
 
 class HomeView(ListView):
     model = Job
-    template_name = 'jobs/home.html'
+    template_name = 'front/home.html'
     context_object_name = 'jobs'
 
     def get_queryset(self):
