@@ -1,6 +1,4 @@
 from django import forms
-from dal import autocomplete
-
 from jobs.models import Job, Skill, Applicant
 
 # class AddSkillForm(forms.ModelForm):
