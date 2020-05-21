@@ -1,8 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-# from django.contrib.postgres.fields import IntegerRangeField
-from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields import JSONField, ArrayField
 
 from accounts.models import User
 from profiles.models import Company
@@ -63,8 +62,11 @@ class Job(models.Model):
     title               = models.ForeignKey(Title, on_delete=models.CASCADE)
     description         = models.TextField()
     location            = models.ForeignKey(Location, on_delete=models.CASCADE)
+    tasks               = ArrayField(models.CharField(max_length=300), null=True)
+    offers              = ArrayField(models.CharField(max_length=300), null=True)
     skills              = models.ManyToManyField(Skill, through='Skillship')
     created_at          = models.DateTimeField(default=timezone.now)
+    company             = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
 
     # skills              = JSONField()
     # type                = models.CharField(choices=JOB_TYPE, max_length=10)
@@ -76,8 +78,6 @@ class Job(models.Model):
     # company_description = models.CharField(max_length=300)
     # website             = models.CharField(max_length=100, default="")
 
-    def __str__(self):
-        return self.title
 
 
 class Skillship(models.Model):
