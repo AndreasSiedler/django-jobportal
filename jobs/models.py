@@ -25,6 +25,15 @@ SKILL_LEVEL = (
 
 )
 
+
+class Title(models.Model):
+    title    = models.CharField(max_length=150)
+    slug     = models.SlugField(max_length = 250, null = True, blank = True)
+
+    def __str__(self):
+        return self.title
+
+
 class Category(models.Model):
     title    = models.CharField(max_length=150)
     slug     = models.SlugField(max_length = 250)
@@ -32,13 +41,6 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
-
-class Type(models.Model):
-    title    = models.CharField(max_length=300)
-
-    def __str__(self):
-        return self.title  
-        
 
 class Location(models.Model):
     title    = models.CharField(max_length=150)
@@ -58,7 +60,7 @@ class Skill(models.Model):
     
 class Job(models.Model):
     user                = models.ForeignKey(User, on_delete=models.CASCADE)
-    title               = models.CharField(max_length=300)
+    title               = models.ForeignKey(Title, on_delete=models.CASCADE)
     description         = models.TextField()
     location            = models.ForeignKey(Location, on_delete=models.CASCADE)
     skills              = models.ManyToManyField(Skill, through='Skillship')
@@ -83,6 +85,9 @@ class Skillship(models.Model):
     skill   = models.ForeignKey(Skill, on_delete=models.CASCADE)
     level   = models.CharField(choices=SKILL_LEVEL, max_length=10)
 
+    class Meta:
+        unique_together = (('job', 'skill'),)
+        index_together = (('job', 'skill'),)
 
 
 class Applicant(models.Model):
