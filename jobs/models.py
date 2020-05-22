@@ -48,6 +48,19 @@ class Location(models.Model):
     def __str__(self):
         return self.title
 
+class Task(models.Model):
+    title    = models.CharField(max_length=150)
+    slug     = models.SlugField(max_length = 250, null = True, blank = True)
+
+    def __str__(self):
+        return self.title
+
+class Offer(models.Model):
+    title    = models.CharField(max_length=150)
+
+    def __str__(self):
+        return self.title
+
 
 class Skill(models.Model):
     name    = models.CharField(max_length=300)
@@ -56,7 +69,36 @@ class Skill(models.Model):
     def __str__(self):
         return self.name  
 
-    
+# Job Profiles
+class Profile(models.Model):
+    title               = models.ForeignKey(Title, on_delete=models.CASCADE)
+    description         = models.TextField()
+    Category            = models.ForeignKey(Category, on_delete=models.CASCADE, null = True)
+    offers              = models.ManyToManyField(Offer)
+    tasks               = models.ManyToManyField(Task)
+    # hardskills          = models.ManyToManyField(Skill, through='ProfileHardSkill')
+    softskills          = models.ManyToManyField(Skill, through='ProfileSoftSkill')
+    created_at          = models.DateTimeField(default=timezone.now)
+
+# class ProfileHardSkill(models.Model):
+#     profile     = models.ForeignKey(Profile, on_delete=models.CASCADE)
+#     task        = models.ForeignKey(Skill, on_delete=models.CASCADE)
+
+#     class Meta:
+#         unique_together = (('profile', 'skill'),)
+#         index_together = (('profile', 'skill'),)
+
+class ProfileSoftSkill(models.Model):
+    profile     = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    skill       = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    level       = models.CharField(choices=SKILL_LEVEL, max_length=10)
+
+    class Meta:
+        unique_together = (('profile', 'skill'),)
+        index_together = (('profile', 'skill'),)
+
+
+# Job Offers
 class Job(models.Model):
     user                = models.ForeignKey(User, on_delete=models.CASCADE)
     title               = models.ForeignKey(Title, on_delete=models.CASCADE)
