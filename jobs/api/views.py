@@ -2,7 +2,7 @@ from rest_framework import viewsets, mixins, status, permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from ..models import Job, Skill
+from ..models import Job, Softskill
 from .serializers import *
 from rest_framework.generics import ListAPIView, CreateAPIView
 from .permissions import IsCreator
@@ -65,8 +65,8 @@ class SkillViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows skills to be viewed or edited.
     """
-    queryset = Skill.objects.all()
-    serializer_class = SkillSerializer
+    queryset = Softskill.objects.all()
+    serializer_class = SoftskillSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     

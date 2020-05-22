@@ -1,5 +1,5 @@
 from django import forms
-from jobs.models import Job, Skill, Applicant
+from jobs.models import Job, Applicant
 from .widgets.widgets import DynamicArrayWidget
 
 # class AddSkillForm(forms.ModelForm):

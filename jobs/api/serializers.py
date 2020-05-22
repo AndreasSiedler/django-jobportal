@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Job, Skill, Applicant
+from ..models import Job, Softskill, Applicant
 
 
 class JobSerializer(serializers.ModelSerializer):
@@ -9,12 +9,12 @@ class JobSerializer(serializers.ModelSerializer):
         fields = ['id', 'title',]
 
 
-class SkillSerializer(serializers.ModelSerializer):
+class SoftskillSerializer(serializers.ModelSerializer):
 
     jobs = JobSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Skill
+        model = Softskill
         fields = ['id', 'name', 'jobs']
 
 

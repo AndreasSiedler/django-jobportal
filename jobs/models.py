@@ -62,12 +62,20 @@ class Offer(models.Model):
         return self.title
 
 
-class Skill(models.Model):
+class Softskill(models.Model):
     name    = models.CharField(max_length=300)
     type    = models.CharField(choices=SKILL_TYPE, max_length=10)
 
     def __str__(self):
         return self.name  
+
+
+class Hardskill(models.Model):
+    title    = models.CharField(max_length=300)
+
+    def __str__(self):
+        return self.title  
+
 
 # Job Profiles
 class Profile(models.Model):
@@ -76,21 +84,22 @@ class Profile(models.Model):
     Category            = models.ForeignKey(Category, on_delete=models.CASCADE, null = True)
     offers              = models.ManyToManyField(Offer)
     tasks               = models.ManyToManyField(Task)
-    # hardskills          = models.ManyToManyField(Skill, through='ProfileHardSkill')
-    softskills          = models.ManyToManyField(Skill, through='ProfileSoftSkill')
+    hardskills          = models.ManyToManyField(Hardskill, through='ProfileHardSkill')
+    softskills          = models.ManyToManyField(Softskill, through='ProfileSoftSkill')
     created_at          = models.DateTimeField(default=timezone.now)
 
-# class ProfileHardSkill(models.Model):
-#     profile     = models.ForeignKey(Profile, on_delete=models.CASCADE)
-#     task        = models.ForeignKey(Skill, on_delete=models.CASCADE)
+class ProfileHardSkill(models.Model):
+    profile     = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    skill       = models.ForeignKey(Hardskill, on_delete=models.CASCADE)
+    level       = models.CharField(choices=SKILL_LEVEL, max_length=10)
 
-#     class Meta:
-#         unique_together = (('profile', 'skill'),)
-#         index_together = (('profile', 'skill'),)
+    class Meta:
+        unique_together = (('profile', 'skill'),)
+        index_together = (('profile', 'skill'),)
 
 class ProfileSoftSkill(models.Model):
     profile     = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    skill       = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    skill       = models.ForeignKey(Softskill, on_delete=models.CASCADE)
     level       = models.CharField(choices=SKILL_LEVEL, max_length=10)
 
     class Meta:
@@ -106,7 +115,7 @@ class Job(models.Model):
     location            = models.ForeignKey(Location, on_delete=models.CASCADE)
     tasks               = ArrayField(models.CharField(max_length=300), null=True)
     offers              = ArrayField(models.CharField(max_length=300), null=True)
-    skills              = models.ManyToManyField(Skill, through='Skillship')
+    skills              = models.ManyToManyField(Softskill, through='Skillship')
     created_at          = models.DateTimeField(default=timezone.now)
     company             = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
 
@@ -124,7 +133,7 @@ class Job(models.Model):
 
 class Skillship(models.Model):
     job     = models.ForeignKey(Job, on_delete=models.CASCADE)
-    skill   = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    skill   = models.ForeignKey(Softskill, on_delete=models.CASCADE)
     level   = models.CharField(choices=SKILL_LEVEL, max_length=10)
 
     class Meta:

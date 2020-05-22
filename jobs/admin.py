@@ -1,11 +1,13 @@
 from django.contrib import admin
-from .models import Profile, ProfileSoftSkill, Job, Title, Offer, Task, Skill, Skillship, Location, Category
+from .models import Profile, ProfileSoftSkill, ProfileHardSkill, Job, Title, Offer, Task, Softskill, Hardskill, Skillship, Location, Category
 
 
 # Profiles
-# class ProfileHardSkillInline(admin.TabularInline):
-#     model                   = ProfileHardSkill
-#     extra                   = 1 # how many rows to show
+class ProfileHardSkillInline(admin.TabularInline):
+    model                   = ProfileHardSkill
+    extra                   = 1 # how many rows to show
+    autocomplete_fields     = ['skill']
+
 
 class ProfileSoftSkillInline(admin.TabularInline):
     model                   = ProfileSoftSkill
@@ -14,7 +16,7 @@ class ProfileSoftSkillInline(admin.TabularInline):
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    inlines                 = (ProfileSoftSkillInline,)
+    inlines                 = (ProfileSoftSkillInline, ProfileHardSkillInline,)
     filter_horizontal       = ('offers', 'tasks',)
 
 
@@ -51,8 +53,11 @@ class TaskAdmin(admin.ModelAdmin):
     search_fields       = ('title',)
 
 # Skill
-class SkillAdmin(admin.ModelAdmin):
+class SoftskillAdmin(admin.ModelAdmin):
     search_fields       = ('name',)
+
+class HardskillAdmin(admin.ModelAdmin):
+    search_fields       = ('title',)
 
 # Location
 class LocationAdmin(admin.ModelAdmin):
@@ -70,6 +75,7 @@ admin.site.register(Job, JobAdmin)
 admin.site.register(Title, TitleAdmin)
 admin.site.register(Offer, OfferAdmin)
 admin.site.register(Task, TaskAdmin)
-admin.site.register(Skill, SkillAdmin)
+admin.site.register(Softskill, SoftskillAdmin)
+admin.site.register(Hardskill, HardskillAdmin)
 admin.site.register(Category, CategoryAdmin) 
 admin.site.register(Location, LocationAdmin) 
