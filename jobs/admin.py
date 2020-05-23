@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PROFILE_LEVEL, Profile, ProfileSoftSkill, ProfileHardSkill, Job, Title, Offer, Task, Softskill, Hardskill, Skillship, Location, Category
+from .models import PROFILE_LEVEL, Profile, ProfileSoftSkill, ProfileHardSkill, Job, JobSoftSkill, JobHardSkill, Offer, Task, Softskill, Hardskill, Location, Category
 from django.template.defaultfilters import slugify
 
 # Profiles
@@ -19,6 +19,8 @@ class ProfileAdmin(admin.ModelAdmin):
     inlines                 = (ProfileSoftSkillInline, ProfileHardSkillInline,)
     # prepopulated_fields     = {'slug': ('title', 'level')}
     filter_horizontal       = ('offers', 'tasks',)
+    search_fields           = ('title',)
+
 
     def save_model(self, request, obj, form, change):
         # don't overwrite manually set slug
@@ -28,18 +30,24 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 # Jobs
-class SkillshipInline(admin.TabularInline):
-    model                   = Skillship
+class JobHardSkillInline(admin.TabularInline):
+    model                   = JobHardSkill
+    extra                   = 1 # how many rows to show
+    autocomplete_fields     = ['skill']
+
+
+class JobSoftSkillInline(admin.TabularInline):
+    model                   = JobSoftSkill
     extra                   = 1 # how many rows to show
     autocomplete_fields     = ['skill']
 
 
 class JobAdmin(admin.ModelAdmin):
-    inlines                 = (SkillshipInline,)
-    list_filter             = ('title__title', 'title',)
-    search_fields           = ('title__title', 'title',)
-    fields                  = ('title', 'description', 'location', 'tasks', 'offers', 'company',)
-    autocomplete_fields     = ['title', 'location',]
+    inlines                 = (JobHardSkillInline, JobSoftSkillInline,)
+    # fields                  = ('title', 'description', 'location', 'tasks', 'offers', 'company',)
+    autocomplete_fields     = ['profile', 'location',]
+    filter_horizontal       = ('offers', 'tasks',)
+
 
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'user', None) is None:
@@ -79,7 +87,6 @@ class CategoryAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Job, JobAdmin)
-admin.site.register(Title, TitleAdmin)
 admin.site.register(Offer, OfferAdmin)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Softskill, SoftskillAdmin)

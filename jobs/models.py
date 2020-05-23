@@ -29,12 +29,12 @@ PROFILE_LEVEL = (
     ('3', "Senior"),
 )
 
-class Title(models.Model):
-    title    = models.CharField(max_length=150)
-    slug     = models.SlugField(max_length = 250, null = True, blank = True)
+# class Title(models.Model):
+#     title    = models.CharField(max_length=150)
+#     slug     = models.SlugField(max_length = 250, null = True, blank = True)
 
-    def __str__(self):
-        return self.title
+#     def __str__(self):
+#         return self.title
 
 
 class Category(models.Model):
@@ -94,6 +94,10 @@ class Profile(models.Model):
     softskills          = models.ManyToManyField(Softskill, through='ProfileSoftSkill')
     created_at          = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return self.title + ' ' + self.level
+
+
 class ProfileHardSkill(models.Model):
     profile     = models.ForeignKey(Profile, on_delete=models.CASCADE)
     skill       = models.ForeignKey(Hardskill, on_delete=models.CASCADE)
@@ -113,40 +117,39 @@ class ProfileSoftSkill(models.Model):
         index_together = (('profile', 'skill'),)
 
 
-# Job Offers
+# Jobs
 class Job(models.Model):
     user                = models.ForeignKey(User, on_delete=models.CASCADE)
-    title               = models.ForeignKey(Title, on_delete=models.CASCADE)
-    description         = models.TextField()
+    profile             = models.ForeignKey(Profile, on_delete=models.CASCADE)
     location            = models.ForeignKey(Location, on_delete=models.CASCADE)
-    tasks               = ArrayField(models.CharField(max_length=300), null=True)
-    offers              = ArrayField(models.CharField(max_length=300), null=True)
-    skills              = models.ManyToManyField(Softskill, through='Skillship')
-    created_at          = models.DateTimeField(default=timezone.now)
+    offers              = models.ManyToManyField(Offer)
+    tasks               = models.ManyToManyField(Task)
+    hardskills          = models.ManyToManyField(Hardskill, through='JobHardSkill')
+    softskills          = models.ManyToManyField(Softskill, through='JobSoftSkill')
     company             = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
-
-    # skills              = JSONField()
-    # type                = models.CharField(choices=JOB_TYPE, max_length=10)
-    # category            = models.ForeignKey(Category, on_delete=models.CASCADE)
-    # salary              = RangeField()
-    # company             = models.ForeignKey(Company, on_delete=models.CASCADE)
-    # filled              = models.BooleanField(default=False)
-    # company_name        = models.CharField(max_length=100)
-    # company_description = models.CharField(max_length=300)
-    # website             = models.CharField(max_length=100, default="")
+    created_at          = models.DateTimeField(default=timezone.now)
 
 
+class JobHardSkill(models.Model):
+    job         = models.ForeignKey(Job, on_delete=models.CASCADE)
+    skill       = models.ForeignKey(Hardskill, on_delete=models.CASCADE)
+    level       = models.CharField(choices=SKILL_LEVEL, max_length=10)
 
-class Skillship(models.Model):
-    job     = models.ForeignKey(Job, on_delete=models.CASCADE)
-    skill   = models.ForeignKey(Softskill, on_delete=models.CASCADE)
-    level   = models.CharField(choices=SKILL_LEVEL, max_length=10)
+    class Meta:
+        unique_together = (('job', 'skill'),)
+        index_together = (('job', 'skill'),)
+
+class JobSoftSkill(models.Model):
+    job         = models.ForeignKey(Job, on_delete=models.CASCADE)
+    skill       = models.ForeignKey(Softskill, on_delete=models.CASCADE)
+    level       = models.CharField(choices=SKILL_LEVEL, max_length=10)
 
     class Meta:
         unique_together = (('job', 'skill'),)
         index_together = (('job', 'skill'),)
 
 
+# Applicant
 class Applicant(models.Model):
     user            = models.ForeignKey(User, on_delete=models.CASCADE)
     job             = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applicants')
