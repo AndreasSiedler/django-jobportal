@@ -21,9 +21,13 @@ SKILL_LEVEL = (
     ('1', "Beginner"),
     ('2', "Advanced"),
     ('3', "Expert"),
-
 )
 
+PROFILE_LEVEL = (
+    ('1', "Junior"),
+    ('2', "Advanced"),
+    ('3', "Senior"),
+)
 
 class Title(models.Model):
     title    = models.CharField(max_length=150)
@@ -79,9 +83,11 @@ class Hardskill(models.Model):
 
 # Job Profiles
 class Profile(models.Model):
-    title               = models.ForeignKey(Title, on_delete=models.CASCADE)
+    title               = models.CharField(max_length=150)
+    slug                = models.SlugField(max_length = 250, blank = True)
+    level               = models.CharField(choices=PROFILE_LEVEL, max_length=10, null = True)
     description         = models.TextField()
-    Category            = models.ForeignKey(Category, on_delete=models.CASCADE, null = True)
+    category            = models.ForeignKey(Category, on_delete=models.CASCADE, null = True)
     offers              = models.ManyToManyField(Offer)
     tasks               = models.ManyToManyField(Task)
     hardskills          = models.ManyToManyField(Hardskill, through='ProfileHardSkill')

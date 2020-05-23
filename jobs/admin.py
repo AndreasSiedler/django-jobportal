@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Profile, ProfileSoftSkill, ProfileHardSkill, Job, Title, Offer, Task, Softskill, Hardskill, Skillship, Location, Category
-
+from .models import PROFILE_LEVEL, Profile, ProfileSoftSkill, ProfileHardSkill, Job, Title, Offer, Task, Softskill, Hardskill, Skillship, Location, Category
+from django.template.defaultfilters import slugify
 
 # Profiles
 class ProfileHardSkillInline(admin.TabularInline):
@@ -17,7 +17,14 @@ class ProfileSoftSkillInline(admin.TabularInline):
 
 class ProfileAdmin(admin.ModelAdmin):
     inlines                 = (ProfileSoftSkillInline, ProfileHardSkillInline,)
+    # prepopulated_fields     = {'slug': ('title', 'level')}
     filter_horizontal       = ('offers', 'tasks',)
+
+    def save_model(self, request, obj, form, change):
+        # don't overwrite manually set slug
+        if form.cleaned_data['slug'] == "":
+            obj.slug = slugify(form.cleaned_data['title']) + "-" + slugify(form.cleaned_data['level'])
+        obj.save()
 
 
 # Jobs
