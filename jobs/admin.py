@@ -48,7 +48,6 @@ class JobAdmin(admin.ModelAdmin):
     autocomplete_fields     = ['profile', 'location',]
     filter_horizontal       = ('offers', 'tasks',)
 
-
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'user', None) is None:
             obj.user = request.user

@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-from django.contrib.postgres.fields import JSONField, ArrayField
+# from django.contrib.postgres.fields import JSONField, ArrayField
 
 from accounts.models import User
 from profiles.models import Company
@@ -88,10 +88,10 @@ class Profile(models.Model):
     level               = models.CharField(choices=PROFILE_LEVEL, max_length=10, null = True)
     description         = models.TextField()
     category            = models.ForeignKey(Category, on_delete=models.CASCADE, null = True)
-    offers              = models.ManyToManyField(Offer)
-    tasks               = models.ManyToManyField(Task)
-    hardskills          = models.ManyToManyField(Hardskill, through='ProfileHardSkill')
-    softskills          = models.ManyToManyField(Softskill, through='ProfileSoftSkill')
+    offers              = models.ManyToManyField(to='jobs.Offer')
+    tasks               = models.ManyToManyField(to='jobs.Task')
+    hardskills          = models.ManyToManyField(to='jobs.Hardskill', through='ProfileHardSkill')
+    softskills          = models.ManyToManyField(to='jobs.Softskill', through='ProfileSoftSkill')
     created_at          = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -119,15 +119,16 @@ class ProfileSoftSkill(models.Model):
 
 # Jobs
 class Job(models.Model):
-    user                = models.ForeignKey(User, on_delete=models.CASCADE)
+    company             = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     profile             = models.ForeignKey(Profile, on_delete=models.CASCADE)
     location            = models.ForeignKey(Location, on_delete=models.CASCADE)
-    offers              = models.ManyToManyField(Offer)
-    tasks               = models.ManyToManyField(Task)
-    hardskills          = models.ManyToManyField(Hardskill, through='JobHardSkill')
-    softskills          = models.ManyToManyField(Softskill, through='JobSoftSkill')
-    company             = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
+    offers              = models.ManyToManyField(to='jobs.Offer')
+    tasks               = models.ManyToManyField(to='jobs.Task')
+    hardskills          = models.ManyToManyField(to='jobs.Hardskill', through='JobHardSkill')
+    softskills          = models.ManyToManyField(to='jobs.Softskill', through='JobSoftSkill')
     created_at          = models.DateTimeField(default=timezone.now)
+    created_by          = models.ForeignKey(User, on_delete=models.CASCADE)
+
 
 
 class JobHardSkill(models.Model):

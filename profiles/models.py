@@ -4,6 +4,14 @@ from django.db import models
 from django.utils import timezone
 
 from accounts.models import User
+# from jobs.models import Hardskill, Softskill, Task, SKILL_LEVEL
+
+SKILL_LEVEL = (
+    ('1', "Beginner"),
+    ('2', "Advanced"),
+    ('3', "Expert"),
+)
+
 
 def get_filename_ext(filepath):
     base_name = os.path.basename(filepath)
@@ -21,12 +29,34 @@ def upload_image_path(instance, filename):
         final_filename=final_filename
     )
 
-# Create your models here.
+# Candidate
 class Candidate(models.Model):
-    user            = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at      = models.DateTimeField(default=timezone.now)
+    user                = models.ForeignKey(User, on_delete=models.CASCADE, blank = True)
+    tasks               = models.ManyToManyField('jobs.Task')
+    hardskills          = models.ManyToManyField('jobs.Hardskill', through='CandidateHardSkill')
+    softskills          = models.ManyToManyField('jobs.Softskill', through='CandidateSoftSkill')
+    created_at          = models.DateTimeField(default=timezone.now)
+
+class CandidateHardSkill(models.Model):
+    candidate       = models.ForeignKey('profiles.Candidate', on_delete=models.CASCADE)
+    skill           = models.ForeignKey('jobs.Hardskill', on_delete=models.CASCADE)
+    level           = models.CharField(choices=SKILL_LEVEL, max_length=10)
+
+    class Meta:
+        unique_together = (('candidate', 'skill'),)
+        index_together = (('candidate', 'skill'),)
+
+class CandidateSoftSkill(models.Model):
+    candidate       = models.ForeignKey('profiles.Candidate', on_delete=models.CASCADE)
+    skill           = models.ForeignKey('jobs.Softskill', on_delete=models.CASCADE)
+    level           = models.CharField(choices=SKILL_LEVEL, max_length=10)
+
+    class Meta:
+        unique_together = (('candidate', 'skill'),)
+        index_together = (('candidate', 'skill'),)
 
 
+# Company
 class Company(models.Model):   
     user            = models.ForeignKey(User, on_delete=models.CASCADE)
     title           = models.CharField(max_length=100)
