@@ -126,9 +126,18 @@ class Job(models.Model):
     tasks               = models.ManyToManyField(to='jobs.Task')
     hardskills          = models.ManyToManyField(to='jobs.Hardskill', through='JobHardSkill')
     softskills          = models.ManyToManyField(to='jobs.Softskill', through='JobSoftSkill')
-    created_at          = models.DateTimeField(default=timezone.now)
-    created_by          = models.ForeignKey(User, on_delete=models.CASCADE)
+    active              = models.BooleanField(default=True)
+    created_by                = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at          = models.DateTimeField(auto_now_add=True)
+    updated_at          = models.DateTimeField(auto_now=True)
 
+    def save(self, request, *args, **kwargs):
+        if self.user is None:
+            self.user = request.user
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.profile} ({self.company})"
 
 
 class JobHardSkill(models.Model):

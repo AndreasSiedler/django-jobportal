@@ -3,7 +3,6 @@ import os
 from django.db import models
 from django.utils import timezone
 
-from accounts.models import User
 # from jobs.models import Hardskill, Softskill, Task, SKILL_LEVEL
 
 SKILL_LEVEL = (
@@ -31,7 +30,7 @@ def upload_image_path(instance, filename):
 
 # Candidate
 class Candidate(models.Model):
-    user                = models.ForeignKey(User, on_delete=models.CASCADE, blank = True)
+    user                = models.ForeignKey('accounts.User', on_delete=models.CASCADE, blank = True)
     tasks               = models.ManyToManyField('jobs.Task')
     hardskills          = models.ManyToManyField('jobs.Hardskill', through='CandidateHardSkill')
     softskills          = models.ManyToManyField('jobs.Softskill', through='CandidateSoftSkill')
@@ -58,12 +57,12 @@ class CandidateSoftSkill(models.Model):
 
 # Company
 class Company(models.Model):   
-    user            = models.ForeignKey(User, on_delete=models.CASCADE)
+    user            = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
     title           = models.CharField(max_length=100)
     slug            = models.SlugField(max_length=100)
     logo            = models.ImageField(upload_to=upload_image_path, null=True, blank=True)
     description     = models.CharField(max_length=300)
-    website         = models.CharField(max_length=100, default="")
+    website         = models.CharField(max_length=100)
     created_at      = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
