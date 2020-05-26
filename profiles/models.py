@@ -32,6 +32,8 @@ def upload_image_path(instance, filename):
 class Candidate(models.Model):
     user                = models.ForeignKey('accounts.User', on_delete=models.CASCADE, blank = True)
     tasks               = models.ManyToManyField('jobs.Task')
+    jobtype             = models.ForeignKey('jobs.Type', on_delete=models.CASCADE)
+    # experience          = models.ManyToManyField('jobs.Type', through='CandidateTypeExperience')
     hardskills          = models.ManyToManyField('jobs.Hardskill', through='CandidateHardSkill')
     softskills          = models.ManyToManyField('jobs.Softskill', through='CandidateSoftSkill')
     created_at          = models.DateTimeField(default=timezone.now)

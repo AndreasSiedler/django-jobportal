@@ -1,22 +1,22 @@
 from django.contrib import admin
-from .models import PROFILE_LEVEL, Profile, ProfileSoftSkill, ProfileHardSkill, Job, JobSoftSkill, JobHardSkill, Offer, Task, Softskill, Hardskill, Location, Category
+from .models import Type, TypeSoftSkill, TypeHardSkill, Job, JobSoftSkill, JobHardSkill, Offer, Task, Softskill, Hardskill, Location, Category
 from django.template.defaultfilters import slugify
 
-# Profiles
-class ProfileHardSkillInline(admin.TabularInline):
-    model                   = ProfileHardSkill
+# Type
+class TypeHardSkillInline(admin.TabularInline):
+    model                   = TypeHardSkill
     extra                   = 1 # how many rows to show
     autocomplete_fields     = ['skill']
 
 
-class ProfileSoftSkillInline(admin.TabularInline):
-    model                   = ProfileSoftSkill
+class TypeSoftSkillInline(admin.TabularInline):
+    model                   = TypeSoftSkill
     extra                   = 1 # how many rows to show
     autocomplete_fields     = ['skill']
 
 
-class ProfileAdmin(admin.ModelAdmin):
-    inlines                 = (ProfileSoftSkillInline, ProfileHardSkillInline,)
+class TypeAdmin(admin.ModelAdmin):
+    inlines                 = (TypeSoftSkillInline, TypeHardSkillInline,)
     # prepopulated_fields     = {'slug': ('title', 'level')}
     filter_horizontal       = ('offers', 'tasks',)
     search_fields           = ('title',)
@@ -45,7 +45,7 @@ class JobSoftSkillInline(admin.TabularInline):
 class JobAdmin(admin.ModelAdmin):
     inlines                 = (JobHardSkillInline, JobSoftSkillInline,)
     # fields                  = ('title', 'description', 'location', 'tasks', 'offers', 'company',)
-    autocomplete_fields     = ['profile', 'location',]
+    autocomplete_fields     = ['type', 'location',]
     filter_horizontal       = ('offers', 'tasks',)
 
     def save_model(self, request, obj, form, change):
@@ -84,7 +84,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
-admin.site.register(Profile, ProfileAdmin)
+admin.site.register(Type, TypeAdmin)
 admin.site.register(Job, JobAdmin)
 admin.site.register(Offer, OfferAdmin)
 admin.site.register(Task, TaskAdmin)

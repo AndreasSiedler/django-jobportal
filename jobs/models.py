@@ -6,11 +6,11 @@ from django.utils import timezone
 from accounts.models import User
 from profiles.models import Company
 
-JOB_TYPE = (
-    ('1', "Full time"),
-    ('2', "Part time"),
-    ('3', "Internship"),
-)
+# JOB_TYPE = (
+#     ('1', "Full time"),
+#     ('2', "Part time"),
+#     ('3', "Internship"),
+# )
 
 SKILL_TYPE = (
     ('1', "Soft Skill"),
@@ -23,7 +23,7 @@ SKILL_LEVEL = (
     ('3', "Expert"),
 )
 
-PROFILE_LEVEL = (
+TYPE_LEVEL = (
     ('1', "Junior"),
     ('2', "Advanced"),
     ('3', "Senior"),
@@ -67,11 +67,10 @@ class Offer(models.Model):
 
 
 class Softskill(models.Model):
-    name    = models.CharField(max_length=300)
-    type    = models.CharField(choices=SKILL_TYPE, max_length=10)
+    title    = models.CharField(max_length=300)
 
     def __str__(self):
-        return self.name  
+        return self.title  
 
 
 class Hardskill(models.Model):
@@ -81,53 +80,53 @@ class Hardskill(models.Model):
         return self.title  
 
 
-# Job Profiles
-class Profile(models.Model):
+# Types
+class Type(models.Model):
     title               = models.CharField(max_length=150)
     slug                = models.SlugField(max_length = 250, blank = True)
-    level               = models.CharField(choices=PROFILE_LEVEL, max_length=10, null = True)
+    level               = models.CharField(choices=TYPE_LEVEL, max_length=10, null = True)
     description         = models.TextField()
     category            = models.ForeignKey(Category, on_delete=models.CASCADE, null = True)
     offers              = models.ManyToManyField(to='jobs.Offer')
     tasks               = models.ManyToManyField(to='jobs.Task')
-    hardskills          = models.ManyToManyField(to='jobs.Hardskill', through='ProfileHardSkill')
-    softskills          = models.ManyToManyField(to='jobs.Softskill', through='ProfileSoftSkill')
+    hardskills          = models.ManyToManyField(to='jobs.Hardskill', through='TypeHardSkill')
+    softskills          = models.ManyToManyField(to='jobs.Softskill', through='TypeSoftSkill')
     created_at          = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.title + ' ' + self.level
 
 
-class ProfileHardSkill(models.Model):
-    profile     = models.ForeignKey(Profile, on_delete=models.CASCADE)
+class TypeHardSkill(models.Model):
+    type        = models.ForeignKey(Type, on_delete=models.CASCADE)
     skill       = models.ForeignKey(Hardskill, on_delete=models.CASCADE)
     level       = models.CharField(choices=SKILL_LEVEL, max_length=10)
 
     class Meta:
-        unique_together = (('profile', 'skill'),)
-        index_together = (('profile', 'skill'),)
+        unique_together     = (('type', 'skill'),)
+        index_together      = (('type', 'skill'),)
 
-class ProfileSoftSkill(models.Model):
-    profile     = models.ForeignKey(Profile, on_delete=models.CASCADE)
+class TypeSoftSkill(models.Model):
+    type        = models.ForeignKey(Type, on_delete=models.CASCADE)
     skill       = models.ForeignKey(Softskill, on_delete=models.CASCADE)
     level       = models.CharField(choices=SKILL_LEVEL, max_length=10)
 
     class Meta:
-        unique_together = (('profile', 'skill'),)
-        index_together = (('profile', 'skill'),)
+        unique_together = (('type', 'skill'),)
+        index_together = (('type', 'skill'),)
 
 
 # Jobs
 class Job(models.Model):
     company             = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
-    profile             = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    type                = models.ForeignKey(Type, on_delete=models.CASCADE)
     location            = models.ForeignKey(Location, on_delete=models.CASCADE)
     offers              = models.ManyToManyField(to='jobs.Offer')
     tasks               = models.ManyToManyField(to='jobs.Task')
     hardskills          = models.ManyToManyField(to='jobs.Hardskill', through='JobHardSkill')
     softskills          = models.ManyToManyField(to='jobs.Softskill', through='JobSoftSkill')
     active              = models.BooleanField(default=True)
-    created_by                = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by          = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at          = models.DateTimeField(auto_now_add=True)
     updated_at          = models.DateTimeField(auto_now=True)
 
@@ -137,7 +136,7 @@ class Job(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.profile} ({self.company})"
+        return f"{self.type} ({self.company})"
 
 
 class JobHardSkill(models.Model):
