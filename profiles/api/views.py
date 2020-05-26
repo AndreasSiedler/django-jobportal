@@ -1,11 +1,13 @@
-from .serializers import CompanySerializer
-from ..models import Company
+from .serializers.common import CompanySerializer, CandidateSerializer
+from ..models import Company, Candidate
 
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import generics
 
+
+# Company
 class CompanyListView(generics.ListCreateAPIView):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
@@ -14,6 +16,16 @@ class CompanyListView(generics.ListCreateAPIView):
 class CompanyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
+
+# Candidate
+class CandidateListView(generics.ListCreateAPIView):
+    queryset = Candidate.objects.all()
+    serializer_class = CandidateSerializer
+
+
+class CandidateView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = CandidateSerializer
+    queryset = Candidate.objects.all()
 
 
 # @api_view(['POST'])

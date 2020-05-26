@@ -21,7 +21,7 @@ class CandidateAdmin(admin.ModelAdmin):
     inlines                 = (CandidateHardSkillInline, CandidateSoftSkillInline,)
     # fields                  = ('title', 'description', 'location', 'tasks', 'offers', 'company',)
     filter_horizontal       = ('tasks',)
-    autocomplete_fields     = ['user']
+    autocomplete_fields     = ['user', 'jobtype']
 
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'user', None) is None:

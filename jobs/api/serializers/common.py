@@ -1,8 +1,15 @@
 from rest_framework import serializers
-from ..models import Job, Softskill, Applicant
-from profiles.api.serializers import CompanySerializer
+from ...models import *
+from profiles.api.serializers.nested import CompanySerializer
 
 
+# Hardskill
+class HardskillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model   = Hardskill
+        fields  = ("title",)
+
+# Job
 class JobSerializer(serializers.ModelSerializer):
 
     company = CompanySerializer(read_only=True)

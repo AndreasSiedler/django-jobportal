@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from ..models import Company
-from accounts.api.serializers import UserSerializer
+from ...models import *
+from accounts.api.serializers.nested import UserSerializer
 
+# Company
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
@@ -10,3 +11,4 @@ class CompanySerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         self.fields['user'] =  UserSerializer(read_only=True)
         return super(CompanySerializer, self).to_representation(instance)
+
