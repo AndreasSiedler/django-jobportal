@@ -39,14 +39,26 @@ class CandidateSerializer(serializers.ModelSerializer):
     #     return [CandidateHardskillSerializer(m).data for m in qset]
 
     def create(self, validated_data):
-        print(validated_data)
         tasks               = validated_data.pop('tasks')
         candidate_to_skill  = validated_data.pop('candidate_to_skill')
         candidate           = Candidate(**validated_data)
         candidate.save()
         candidate.tasks.set(tasks)
 
-        # CandidateHardSkill.objects.create(candidate=candidate, skill=candidate_to_skill, level="1")
+        for each in candidate_to_skill:
+            each['candidate'] = candidate
+            candidate_hardskill = CandidateHardSkill()
+            candidate_hardskill.candidate = each["candidate"]
+            candidate_hardskill.skill = each["skill"]
+            candidate_hardskill.level = each["level"]   
+            candidate_hardskill.save()
+
+            # NOR WORKING:
+            # CandidateHardSkill(**each)
+            # CandidateHardSkill.save()
+            # NOR WORKING:
+            # CandidateHardSkill.objects.create(candidate=candidate, skill=candidate_to_skill, level="1")
+
         return candidate
 
     # To just use serializer for GET
