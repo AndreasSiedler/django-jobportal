@@ -73,6 +73,3 @@ class Company(models.Model):
     
     class Meta:
         verbose_name_plural = "companies"
-
-    def __str__(self):
-        return self.title
