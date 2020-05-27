@@ -27,13 +27,20 @@ def upload_image_path(instance, filename):
 
 # Candidate
 class Candidate(models.Model):
-    user                = models.ForeignKey('accounts.User', on_delete=models.CASCADE, blank = True)
+    user                = models.ForeignKey('accounts.User', on_delete=models.CASCADE, blank=True)
     tasks               = models.ManyToManyField('jobs.Task')
     jobtype             = models.ForeignKey('jobs.Type', on_delete=models.CASCADE)
     # experience          = models.ManyToManyField('jobs.Type', through='CandidateTypeExperience')
     hardskills          = models.ManyToManyField('jobs.Hardskill', through='CandidateHardSkill')
     softskills          = models.ManyToManyField('jobs.Softskill', through='CandidateSoftSkill')
     created_at          = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = (('user', 'jobtype'),)
+        index_together = (('user', 'jobtype'),)
+
+    def __str__(self):
+        return f"{self.user.email} ({self.jobtype.title})" 
 
 class CandidateHardSkill(models.Model):
     candidate       = models.ForeignKey('profiles.Candidate', on_delete=models.CASCADE, related_name='candidate_to_skill')
@@ -63,6 +70,9 @@ class Company(models.Model):
     description     = models.CharField(max_length=300)
     website         = models.CharField(max_length=100)
     created_at      = models.DateTimeField(default=timezone.now)
+    
+    class Meta:
+        verbose_name_plural = "companies"
 
     def __str__(self):
         return self.title

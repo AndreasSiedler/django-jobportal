@@ -12,10 +12,6 @@ from profiles.models import Company
 #     ('3', "Internship"),
 # )
 
-SKILL_TYPE = (
-    ('1', "Soft Skill"),
-    ('2', "Technical Skill"),
-)
 
 SKILL_LEVEL = (
     ('1', "Beginner"),
@@ -29,22 +25,18 @@ TYPE_LEVEL = (
     ('3', "Senior"),
 )
 
-# class Title(models.Model):
-#     title    = models.CharField(max_length=150)
-#     slug     = models.SlugField(max_length = 250, null = True, blank = True)
-
-#     def __str__(self):
-#         return self.title
-
-
+# Categories
 class Category(models.Model):
     title    = models.CharField(max_length=150)
     slug     = models.SlugField(max_length = 250)
 
+    class Meta:
+        verbose_name_plural = "categories"
+
     def __str__(self):
         return self.title
 
-
+# Locations
 class Location(models.Model):
     title    = models.CharField(max_length=150)
     slug     = models.SlugField(max_length = 250, null = True, blank = True)
@@ -52,6 +44,7 @@ class Location(models.Model):
     def __str__(self):
         return self.title
 
+# Tasks
 class Task(models.Model):
     title    = models.CharField(max_length=150)
     slug     = models.SlugField(max_length = 250, null = True, blank = True)
@@ -59,20 +52,21 @@ class Task(models.Model):
     def __str__(self):
         return self.title
 
+# Offers
 class Offer(models.Model):
     title    = models.CharField(max_length=150)
 
     def __str__(self):
         return self.title
 
-
+# Softskills
 class Softskill(models.Model):
     title    = models.CharField(max_length=300)
 
     def __str__(self):
         return self.title  
 
-
+# Hardskills
 class Hardskill(models.Model):
     title    = models.CharField(max_length=300)
 
@@ -158,7 +152,7 @@ class JobSoftSkill(models.Model):
         index_together = (('job', 'skill'),)
 
 
-# Applicant
+# Applicants
 class Applicant(models.Model):
     user            = models.ForeignKey(User, on_delete=models.CASCADE)
     job             = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applicants')
