@@ -19,6 +19,7 @@ class CandidateHardskillSerializer(serializers.ModelSerializer):
     """Used as a nested serializer by CandidateSerializer"""
     # skill       = serializers.StringRelatedField()
     # level       = serializers.StringRelatedField()
+    id = serializers.ModelField(model_field=CandidateHardSkill._meta.get_field('id'), required=False)
 
     class Meta:
         model   = CandidateHardSkill
@@ -64,8 +65,17 @@ class CandidateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         print(validated_data)
         # Set Tasks
-        tasks_data = validated_data.pop('tasks')
-        instance.tasks.set(tasks_data)
+        if 'tasks' in validated_data:
+            tasks_data = validated_data.pop('tasks')
+            instance.tasks.set(tasks_data)
+
+        if 'candidate_to_skill' in validated_data:
+            candidate_to_skill_data = validated_data.pop('candidate_to_skill')
+            for each in candidate_to_skill_data:
+                candidate_hardskill = CandidateHardSkill.objects.get(pk=each["id"])
+                candidate_hardskill.skill = each["skill"]
+                candidate_hardskill.level = each["level"]
+                candidate_hardskill.save()
 
         instance.user = validated_data.get('user', instance.user)
         instance.jobtype = validated_data.get('jobtype', instance.jobtype)
