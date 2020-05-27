@@ -1,9 +1,6 @@
 import os
-
 from django.db import models
 from django.utils import timezone
-
-# from jobs.models import Hardskill, Softskill, Task, SKILL_LEVEL
 
 SKILL_LEVEL = (
     ('1', "Beginner"),
@@ -39,8 +36,8 @@ class Candidate(models.Model):
     created_at          = models.DateTimeField(default=timezone.now)
 
 class CandidateHardSkill(models.Model):
-    candidate       = models.ForeignKey('profiles.Candidate', on_delete=models.CASCADE)
-    skill           = models.ForeignKey('jobs.Hardskill', on_delete=models.CASCADE)
+    candidate       = models.ForeignKey('profiles.Candidate', on_delete=models.CASCADE, related_name='candidate_to_skill')
+    skill           = models.ForeignKey('jobs.Hardskill', on_delete=models.CASCADE, related_name='skill_to_candidate')
     level           = models.CharField(choices=SKILL_LEVEL, max_length=10)
 
     class Meta:

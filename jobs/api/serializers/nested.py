@@ -3,6 +3,7 @@ from ...models import Task
 
 # Task
 class TaskSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model   = Task
-        fields  = ("id", "title",)
+        fields  = ('id', 'title',)
