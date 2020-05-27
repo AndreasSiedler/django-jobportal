@@ -61,6 +61,20 @@ class CandidateSerializer(serializers.ModelSerializer):
 
         return candidate
 
+    def update(self, instance, validated_data):
+        print(validated_data)
+        # Set Tasks
+        tasks_data = validated_data.pop('tasks')
+        instance.tasks.set(tasks_data)
+
+        instance.user = validated_data.get('user', instance.user)
+        instance.jobtype = validated_data.get('jobtype', instance.jobtype)
+        instance.save()
+
+
+        return instance
+
+
     # To just use serializer for GET
     def to_representation(self, instance):
         self.fields['user']     =  UserSerializer(read_only=True)

@@ -47,6 +47,7 @@ class JobAdmin(admin.ModelAdmin):
     # fields                  = ('title', 'description', 'location', 'tasks', 'offers', 'company',)
     autocomplete_fields     = ['type', 'location',]
     filter_horizontal       = ('offers', 'tasks',)
+    readonly_fields     = ('id',)
 
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'user', None) is None:
@@ -61,26 +62,38 @@ class TitleAdmin(admin.ModelAdmin):
 # Offer
 class OfferAdmin(admin.ModelAdmin):
     search_fields       = ('title',)
+    readonly_fields     = ('id',)
+
 
 # Task
 class TaskAdmin(admin.ModelAdmin):
     search_fields       = ('title',)
+    readonly_fields     = ('id',)
+
 
 # Skill
 class SoftskillAdmin(admin.ModelAdmin):
     search_fields       = ('name',)
+    readonly_fields     = ('id',)
+
 
 class HardskillAdmin(admin.ModelAdmin):
     search_fields       = ('title',)
+    readonly_fields     = ('id',)
+
 
 # Location
 class LocationAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
     search_fields       = ('title',)
+    readonly_fields     = ('id',)
+
 
 # Category
 class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('title',)}
+    readonly_fields     = ('id',)
+
 
 
 # Register your models here.
