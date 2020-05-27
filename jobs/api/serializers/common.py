@@ -1,7 +1,12 @@
-from rest_framework import serializers
+from rest_framework import (serializers, filters)
 from ...models import *
 from profiles.api.serializers.nested import CompanySerializer
 
+# Type
+class TypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model   = Type
+        fields  = ("id", "title",)
 
 # Hardskill
 class HardskillSerializer(serializers.ModelSerializer):
