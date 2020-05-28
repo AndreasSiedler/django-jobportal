@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Candidate, CandidateHardSkill, CandidateSoftSkill, Company
+from .models import Candidate, CandidateHardSkill, CandidateSoftSkill, Company, Location
 
 # Company
 class CompanyAdmin(admin.ModelAdmin):
@@ -32,3 +32,4 @@ class CandidateAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Candidate, CandidateAdmin)
 admin.site.register(Company, CompanyAdmin)
+admin.site.register(Location)

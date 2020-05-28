@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Type, TypeSoftSkill, TypeHardSkill, Job, JobSoftSkill, JobHardSkill, Offer, Task, Softskill, Hardskill, Location, Category
+from .models import *
 from django.template.defaultfilters import slugify
 
 # Type
@@ -20,12 +20,12 @@ class TypeAdmin(admin.ModelAdmin):
     # prepopulated_fields     = {'slug': ('title', 'level')}
     filter_horizontal       = ('offers', 'tasks',)
     search_fields           = ('title',)
-
+    readonly_fields         = ('slug',)
 
     def save_model(self, request, obj, form, change):
-        # don't overwrite manually set slug
-        if form.cleaned_data['slug'] == "":
-            obj.slug = slugify(form.cleaned_data['title']) + "-" + slugify(form.cleaned_data['level'])
+        index_skill_level   = int(form.cleaned_data['level']) - 1
+        skill_level         = TYPE_LEVEL[index_skill_level][1]
+        obj.slug            = f"{slugify(form.cleaned_data['title'])}-{slugify(skill_level)}"
         obj.save()
 
 

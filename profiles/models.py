@@ -61,7 +61,7 @@ class CandidateSoftSkill(models.Model):
         index_together = (('candidate', 'skill'),)
 
 
-# Company
+# Companies
 class Company(models.Model):   
     user            = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
     title           = models.CharField(max_length=100)
@@ -73,3 +73,10 @@ class Company(models.Model):
     
     class Meta:
         verbose_name_plural = "companies"
+
+# Locations
+class Location(models.Model):   
+    company         = models.ForeignKey('profiles.Company', on_delete=models.CASCADE)
+    title           = models.CharField(max_length=100)
+    longitude       = models.CharField(max_length=300)
+    latitude        = models.CharField(max_length=300)

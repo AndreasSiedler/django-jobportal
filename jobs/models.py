@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
-# from django.contrib.postgres.fields import JSONField, ArrayField
+from django.contrib.postgres.fields import JSONField, ArrayField
+from django.core.exceptions import ValidationError
 
 from accounts.models import User
 from profiles.models import Company
@@ -68,7 +69,16 @@ class Softskill(models.Model):
 
 # Hardskills
 class Hardskill(models.Model):
-    title    = models.CharField(max_length=300)
+    title           = models.CharField(max_length=300)
+    dependency      = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True)
+    needs           = JSONField()
+
+    def save(self, *args, **kwargs):
+        # if self.dependency:
+        #     print(self.dependency.id)
+        if self.dependency and self.dependency.id == self.id:
+            raise ValidationError('You can\'t have yourself as a dependency!')
+        return super(Hardskill, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.title  
@@ -77,10 +87,10 @@ class Hardskill(models.Model):
 # Types
 class Type(models.Model):
     title               = models.CharField(max_length=150)
-    slug                = models.SlugField(max_length = 250, blank = True)
-    level               = models.CharField(choices=TYPE_LEVEL, max_length=10, null = True)
+    slug                = models.SlugField(max_length=250, unique=True)
+    level               = models.CharField(choices=TYPE_LEVEL, max_length=10, null=True)
     description         = models.TextField()
-    category            = models.ForeignKey(Category, on_delete=models.CASCADE, null = True)
+    category            = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     offers              = models.ManyToManyField(to='jobs.Offer')
     tasks               = models.ManyToManyField(to='jobs.Task')
     hardskills          = models.ManyToManyField(to='jobs.Hardskill', through='TypeHardSkill')
@@ -88,7 +98,9 @@ class Type(models.Model):
     created_at          = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.title + ' ' + self.level
+        index_skill_level   = int(self.level) - 1
+        skill_level         = TYPE_LEVEL[index_skill_level][1]
+        return f"{self.title} ({skill_level})"
 
 
 class TypeHardSkill(models.Model):
@@ -113,6 +125,7 @@ class TypeSoftSkill(models.Model):
 # Jobs
 class Job(models.Model):
     company             = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
+    description         = models.TextField()
     type                = models.ForeignKey(Type, on_delete=models.CASCADE)
     location            = models.ForeignKey(Location, on_delete=models.CASCADE)
     offers              = models.ManyToManyField(to='jobs.Offer')
