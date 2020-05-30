@@ -1,9 +1,8 @@
 # accounts.models.py
 
 from django.db import models
-from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
-)
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -51,14 +50,10 @@ class UserManager(BaseUserManager):
 
         
 
-class User(AbstractBaseUser):
-    email       = models.EmailField(
-        verbose_name='email address',
-        max_length=255,
-        unique=True,
-    )
-    first_name  = models.CharField(max_length=255)
-    last_name   = models.CharField(max_length=255)
+class User(AbstractBaseUser, PermissionsMixin):
+    email       = models.EmailField(max_length=254, unique=True)
+    first_name  = models.CharField(max_length=255, null=True, blank=True)
+    last_name   = models.CharField(max_length=255, null=True, blank=True)
     active      = models.BooleanField(default=True)
     employee    = models.BooleanField(default=False)
     employer    = models.BooleanField(default=False)
@@ -66,16 +61,14 @@ class User(AbstractBaseUser):
     admin       = models.BooleanField(default=False) # a superuser
     timestamp   = models.DateTimeField(auto_now_add=True)
 
-    # confirmed = models.BooleanField(default=False) # from email
-    # confirmed_date = models.DateTimeField(default=False)
-
-    # notice the absence of a "Password field", that is built in.
-
     USERNAME_FIELD = 'email'
+    EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = [] # Email & Password are required by default. # 'full_name' would be possible required field
 
     objects = UserManager()
 
+    def get_absolute_url(self):
+        return "/users/%i/" % (self.pk)
 
     def get_full_name(self):
         # The user is identified by their email address
@@ -122,7 +115,3 @@ class User(AbstractBaseUser):
     def is_active(self):
         "Is the user active?"
         return self.active
-
-
-# class Profile(models.Model):
-#     user = models.OneToOneField(User)
