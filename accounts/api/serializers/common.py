@@ -23,9 +23,9 @@ class RegisterSerializer(serializers.Serializer):
     first_name = serializers.CharField(required=True, write_only=True)
     last_name = serializers.CharField(required=True, write_only=True)
     password1 = serializers.CharField(required=True, write_only=True)
-    password2 = serializers.CharField(required=True, write_only=True)
-    is_employer = serializers.BooleanField(required=False, write_only=True)
-    is_employee = serializers.BooleanField(required=False, write_only=True)
+    password2 = serializers.CharField(required=True, write_only=True) # Doesnt has password2 field in User Model
+    is_employer = serializers.BooleanField(required=True, write_only=True)
+    is_employee = serializers.BooleanField(required=True, write_only=True)
 
 
     def validate_email(self, email):
@@ -45,26 +45,15 @@ class RegisterSerializer(serializers.Serializer):
                 _("The two password fields didn't match."))
         return data
 
-    def get_cleaned_data(self):
-        return {
-            'first_name': self.validated_data.get('first_name', ''),
-            'last_name': self.validated_data.get('last_name', ''),
-            'password1': self.validated_data.get('password1', ''),
-            'email': self.validated_data.get('email', ''),
-            'is_employer': self.validated_data.get('is_employer', ''),
-            'is_employee': self.validated_data.get('is_employee', ''),
-        }
-
     def save(self, request):
-        adapter = get_adapter()
-        user = adapter.new_user(request)
-        self.cleaned_data = self.get_cleaned_data()
-        print(self.cleaned_data)
-        adapter.save_user(request, user, self)
-        setup_user_email(request, user, [])
-        if self.cleaned_data.get('is_employer', user.is_employer):
-            user.is_employer = True
-        if self.cleaned_data.get('is_employee', user.is_employee):
-            user.is_employee = True
+        print(self.validated_data)
+        user = User(
+            email = self.validated_data['email'],
+            first_name = self.validated_data['first_name'],
+            last_name = self.validated_data['last_name'],
+            is_employer = self.validated_data['is_employer'],
+            is_employee = self.validated_data['is_employee'],
+        )
+        user.set_password(self.validated_data['password1'])
         user.save()
         return user
