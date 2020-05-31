@@ -6,7 +6,7 @@ from profiles.models import Candidate, Company
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     # print("Created: ", created)
-    if created and instance.employee:
+    if created and instance.is_employee:
         Candidate.objects.create(user=instance)
-    if created and instance.employer:
+    if created and instance.is_employer:
         Company.objects.create(user=instance)

@@ -59,8 +59,6 @@ INSTALLED_APPS = [
     'profiles',
 ]
 
-AUTH_USER_MODEL = 'accounts.User' # Changes the built-in user model to ours
-
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -220,7 +218,7 @@ SWAGGER_SETTINGS = {
 }
 
 # Auth user
-AUTH_USER_MODEL = "accounts.User"
+AUTH_USER_MODEL = 'accounts.User'
 
 # Configure django-rest-framework
 REST_FRAMEWORK = {
@@ -230,11 +228,17 @@ REST_FRAMEWORK = {
     )
 }
 
-# For django.contrib.sites
-SITE_ID = 1
 
 # Configure django-allauth
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/?verification=1'
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/?verification=1'
+
+SITE_ID = 1
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
