@@ -31,7 +31,7 @@ class UserManager(BaseUserManager):
             email,
             password=password,
         )
-        user.staff = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
@@ -43,43 +43,34 @@ class UserManager(BaseUserManager):
             email,
             password=password,
         )
-        user.staff = True
-        user.admin = True
+        user.is_staff = True
+        user.is_superuser = True
         user.save(using=self._db)
         return user
 
         
 
-class User(AbstractBaseUser, PermissionsMixin):
-    email       = models.EmailField(max_length=254, unique=True)
-    first_name  = models.CharField(max_length=255, null=True, blank=True)
-    last_name   = models.CharField(max_length=255, null=True, blank=True)
-    active      = models.BooleanField(default=True)
-    employee    = models.BooleanField(default=False)
-    employer    = models.BooleanField(default=False)
-    staff       = models.BooleanField(default=False) # a admin user; non super-user
-    admin       = models.BooleanField(default=False) # a superuser
-    timestamp   = models.DateTimeField(auto_now_add=True)
-
+# User Model
+class User(AbstractBaseUser):
+    email = models.EmailField(max_length=254, unique=True)
+    name = models.CharField(max_length=254, null=True, blank=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    last_login = models.DateTimeField(null=True, blank=True)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
-    REQUIRED_FIELDS = [] # Email & Password are required by default. # 'full_name' would be possible required field
+    REQUIRED_FIELDS = []
 
     objects = UserManager()
 
     def get_absolute_url(self):
         return "/users/%i/" % (self.pk)
 
-    def get_full_name(self):
-        # The user is identified by their email address
+    def __str__(self):
         return self.email
-
-    def get_short_name(self):
-        # The user is identified by their email address
-        return self.email
-
-    def __str__(self):              # __unicode__ on Python 2
-        return self.first_name + ' ' + self.last_name + ' (' + self.email + ')'
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"
@@ -90,28 +81,3 @@ class User(AbstractBaseUser, PermissionsMixin):
         "Does the user have permissions to view the app `app_label`?"
         # Simplest possible answer: Yes, always
         return True
-
-    @property
-    def is_employee(self):
-        "Is the user a member of employee?"
-        return self.employee
-
-    @property
-    def is_employer(self):
-        "Is the user a member of employer?"
-        return self.employer
-
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        return self.staff
-
-    @property
-    def is_admin(self):
-        "Is the user a admin member?"
-        return self.admin
-
-    @property
-    def is_active(self):
-        "Is the user active?"
-        return self.active
