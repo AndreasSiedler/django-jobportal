@@ -77,11 +77,6 @@
                                     {% if request.user.is_authenticated and request.user.is_employer %}
                                         <a id="clientZone" href="#" data-toggle="dropdown" class="boxed-btn3"><i class="fa fa-user"></i> {{request.user.first_name}} <i class="ti-angle-down"></i></a>
                                         <div aria-labelledby="clientZone" class="dropdown-menu">
-                                            <a href="{% url 'jobs:employer-dashboard' %}" class="dropdown-item">Dashboard</a>
-                                            <a href="{% url 'jobs:employer-all-applicants' %}" class="dropdown-item">Applicants </a>
-                                            <a href="{% url 'jobs:employer-jobs-create' %}" class="dropdown-item">Post a new
-                                                job </a>
-                                            <a href="{% url 'accounts:logout' %}" class="dropdown-item">Logout</a>
                                         </div>
                                     {% else %}
                                     <div class="phone_num d-none d-xl-block">
