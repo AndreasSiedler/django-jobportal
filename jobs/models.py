@@ -133,7 +133,7 @@ class Job(models.Model):
     hardskills          = models.ManyToManyField(to='jobs.Hardskill', through='JobHardSkill')
     softskills          = models.ManyToManyField(to='jobs.Softskill', through='JobSoftSkill')
     active              = models.BooleanField(default=True)
-    created_by          = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by          = models.ForeignKey(User, related_name="jobs", on_delete=models.CASCADE)
     created_at          = models.DateTimeField(auto_now_add=True)
     updated_at          = models.DateTimeField(auto_now=True)
 
