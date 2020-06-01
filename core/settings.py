@@ -255,3 +255,5 @@ REST_AUTH_SERIALIZERS = {
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'accounts.api.serializers.common.RegisterSerializer',
 }
+
+REST_USE_JWT = True
