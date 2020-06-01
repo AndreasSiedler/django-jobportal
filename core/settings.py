@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    # Django Apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
-    # Rest Framework
+    # Third-Party Apps
     'corsheaders',
     'drf_yasg',
     'rest_framework',
@@ -53,7 +54,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'rest_auth.registration',
 
-    # Apps
+    # Local Apps (Your project's apps)
     'jobs',
     'accounts',
     'profiles',
@@ -247,6 +248,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # instruct rest_auth to use custom UserSerializer
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'accounts.api.serializers.common.UserSerializer',
+    'TOKEN_SERIALIZER': 'accounts.api.serializers.common.TokenSerializer',
     # 'LOGIN_SERIALIZER': 'accounts.api.serializers.common.LoginSerializer',
 }
 

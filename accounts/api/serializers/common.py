@@ -6,6 +6,7 @@ from allauth.account import app_settings as allauth_settings
 from allauth.utils import email_address_exists
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
+from rest_framework.authtoken.models import Token
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,6 +14,14 @@ class UserSerializer(serializers.ModelSerializer):
   class Meta:
     model=User
     fields = ('id', 'email', 'first_name', 'last_name',)
+
+
+class TokenSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Token
+        fields = ('key', 'user')
 
 
 class RegisterSerializer(serializers.Serializer):
