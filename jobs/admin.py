@@ -20,13 +20,15 @@ class TypeAdmin(admin.ModelAdmin):
     # prepopulated_fields     = {'slug': ('title', 'level')}
     filter_horizontal       = ('offers', 'tasks',)
     search_fields           = ('title',)
-    readonly_fields         = ('slug',)
+    # readonly_fields         = ('slug',)
+    list_display            = ('title', 'category', 'slug',)
 
-    def save_model(self, request, obj, form, change):
-        index_skill_level   = int(form.cleaned_data['level']) - 1
-        skill_level         = TYPE_LEVEL[index_skill_level][1]
-        obj.slug            = f"{slugify(form.cleaned_data['title'])}-{slugify(skill_level)}"
-        obj.save()
+
+    # def save_model(self, request, obj, form, change):
+    #     index_skill_level   = int(form.cleaned_data['level']) - 1
+    #     skill_level         = TYPE_LEVEL[index_skill_level][1]
+    #     obj.slug            = f"{slugify(form.cleaned_data['title'])}-{slugify(skill_level)}"
+    #     obj.save()
 
 
 # Jobs
@@ -45,9 +47,9 @@ class JobSoftSkillInline(admin.TabularInline):
 class JobAdmin(admin.ModelAdmin):
     inlines                 = (JobHardSkillInline, JobSoftSkillInline,)
     # fields                  = ('title', 'description', 'location', 'tasks', 'offers', 'company',)
-    autocomplete_fields     = ['type', 'location',]
+    autocomplete_fields     = ['type',]
     filter_horizontal       = ('offers', 'tasks',)
-    readonly_fields     = ('id',)
+    readonly_fields         = ('id',)
 
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'user', None) is None:
@@ -55,9 +57,9 @@ class JobAdmin(admin.ModelAdmin):
         obj.save()
 
 # Title
-class TitleAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug': ('title',)}
-    search_fields       = ('title',)
+# class TitleAdmin(admin.ModelAdmin):
+#     prepopulated_fields = {'slug': ('title',)}
+#     search_fields       = ('title',)
 
 # Offer
 class OfferAdmin(admin.ModelAdmin):
@@ -69,6 +71,8 @@ class OfferAdmin(admin.ModelAdmin):
 class TaskAdmin(admin.ModelAdmin):
     search_fields       = ('title',)
     readonly_fields     = ('id',)
+    list_display        = ('title', 'category',)
+    list_filter         = ('title', 'category',)
 
 
 # Skill
@@ -80,6 +84,9 @@ class SoftskillAdmin(admin.ModelAdmin):
 class HardskillAdmin(admin.ModelAdmin):
     search_fields       = ('title',)
     readonly_fields     = ('id',)
+    autocomplete_fields = ('dependency',)
+    list_display        = ('title', 'dependency',)
+
 
 
 # Location
@@ -104,4 +111,4 @@ admin.site.register(Task, TaskAdmin)
 admin.site.register(Softskill, SoftskillAdmin)
 admin.site.register(Hardskill, HardskillAdmin)
 admin.site.register(Category, CategoryAdmin) 
-admin.site.register(Location, LocationAdmin) 
+# admin.site.register(Location, LocationAdmin) 

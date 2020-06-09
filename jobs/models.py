@@ -14,6 +14,17 @@ from profiles.models import Company
 # )
 
 
+# SKILL_RELEVANZ = (
+#     ('1', "Must-have"),
+#     ('2', "Nice-to-Have"),
+# )
+
+SKILL_PRIORITY = (
+    ('1', "Low"),
+    ('2', "Medium"),
+    ('3', "High"),
+)
+
 SKILL_LEVEL = (
     ('1', "Beginner"),
     ('2', "Advanced"),
@@ -38,17 +49,19 @@ class Category(models.Model):
         return self.title
 
 # Locations
-class Location(models.Model):
-    title    = models.CharField(max_length=150)
-    slug     = models.SlugField(max_length = 250, null = True, blank = True)
+# class Location(models.Model):
+#     title    = models.CharField(max_length=150)
+#     slug     = models.SlugField(max_length = 250, null = True, blank = True)
 
-    def __str__(self):
-        return self.title
+#     def __str__(self):
+#         return self.title
 
 # Tasks
 class Task(models.Model):
     title    = models.CharField(max_length=150)
-    slug     = models.SlugField(max_length = 250, null = True, blank = True)
+    # slug     = models.SlugField(max_length = 250, null = True, blank = True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
+
 
     def __str__(self):
         return self.title
@@ -88,7 +101,7 @@ class Hardskill(models.Model):
 class Type(models.Model):
     title               = models.CharField(max_length=150)
     slug                = models.SlugField(max_length=250, unique=True)
-    level               = models.CharField(choices=TYPE_LEVEL, max_length=10, null=True)
+    # level               = models.CharField(choices=TYPE_LEVEL, max_length=10, null=True)
     description         = models.TextField()
     category            = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     offers              = models.ManyToManyField(to='jobs.Offer')
@@ -98,15 +111,19 @@ class Type(models.Model):
     created_at          = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        index_skill_level   = int(self.level) - 1
-        skill_level         = TYPE_LEVEL[index_skill_level][1]
-        return f"{self.title} ({skill_level})"
+        return f"{self.title}"
+    # def __str__(self):
+    #     index_skill_level   = int(self.level) - 1
+    #     skill_level         = TYPE_LEVEL[index_skill_level][1]
+    #     return f"{self.title} ({skill_level})"
 
 
 class TypeHardSkill(models.Model):
     type        = models.ForeignKey(Type, on_delete=models.CASCADE)
     skill       = models.ForeignKey(Hardskill, on_delete=models.CASCADE)
-    level       = models.CharField(choices=SKILL_LEVEL, max_length=10)
+    # level       = models.CharField(choices=SKILL_LEVEL, max_length=10)
+    priority    = models.CharField(choices=SKILL_PRIORITY, max_length=10, null=True)
+
 
     class Meta:
         unique_together     = (('type', 'skill'),)
@@ -127,7 +144,7 @@ class Job(models.Model):
     company             = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     description         = models.TextField()
     type                = models.ForeignKey(Type, on_delete=models.CASCADE)
-    location            = models.ForeignKey(Location, on_delete=models.CASCADE)
+    # location            = models.ForeignKey(Location, on_delete=models.CASCADE)
     offers              = models.ManyToManyField(to='jobs.Offer')
     tasks               = models.ManyToManyField(to='jobs.Task')
     hardskills          = models.ManyToManyField(to='jobs.Hardskill', through='JobHardSkill')
@@ -149,7 +166,8 @@ class Job(models.Model):
 class JobHardSkill(models.Model):
     job         = models.ForeignKey(Job, on_delete=models.CASCADE)
     skill       = models.ForeignKey(Hardskill, on_delete=models.CASCADE)
-    level       = models.CharField(choices=SKILL_LEVEL, max_length=10)
+    # level       = models.CharField(choices=SKILL_LEVEL, max_length=10)
+    priority    = models.CharField(choices=SKILL_PRIORITY, max_length=10, null=True)
 
     class Meta:
         unique_together = (('job', 'skill'),)

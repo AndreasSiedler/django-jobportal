@@ -7,15 +7,15 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView, CreateView
 from django.shortcuts import render
 import json
-from .models import Job, Applicant, Location, Category
+from .models import Job, Applicant, Category
 
 
 def home_view(request):
     context = {}
-    locations   = list(Location.objects.values())
+    # locations   = list(Location.objects.values())
     categories  = list(Category.objects.values())
 
-    context['locations_json']   = json.dumps(locations)
+    # context['locations_json']   = json.dumps(locations)
     context['categories_json']  = json.dumps(categories)
     context['trendings'] = Job.objects.filter(created_at__month=timezone.now().month)[:7]
 

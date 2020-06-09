@@ -2,11 +2,20 @@ from rest_framework import (serializers, filters)
 from ...models import *
 from profiles.api.serializers.nested import CompanySerializer
 
+# Task
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model   = Task
+        fields  = ("id", "title",)
+
 # Type
 class TypeSerializer(serializers.ModelSerializer):
+
+    tasks = TaskSerializer(many=True)
     class Meta:
         model   = Type
-        fields  = ("id", "title",)
+        fields  = ("id", "title", "category", "tasks", "description",)
+
 
 # Hardskill
 class HardskillSerializer(serializers.ModelSerializer):
