@@ -102,7 +102,7 @@ DATABASES = {
         'NAME': 'djangojobportal',
         'USER': 'postgres',
         'PASSWORD': 'mysecretpassword',
-        'HOST': 'localhost', # "db" in production
+        'HOST': 'db', # "db" in production && "localhost" when dev without docker postgres
         'PORT': 5432,
     }
 }

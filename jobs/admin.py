@@ -46,7 +46,7 @@ class JobSoftSkillInline(admin.TabularInline):
 
 class JobAdmin(admin.ModelAdmin):
     inlines                 = (JobHardSkillInline, JobSoftSkillInline,)
-    # fields                  = ('title', 'description', 'location', 'tasks', 'offers', 'company',)
+    fields                  = ('type', 'description', 'tasks', 'offers',)
     autocomplete_fields     = ['type',]
     filter_horizontal       = ('offers', 'tasks',)
     readonly_fields         = ('id',)
