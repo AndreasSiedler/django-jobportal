@@ -5,7 +5,7 @@ from django.contrib.postgres.fields import JSONField, ArrayField
 from django.core.exceptions import ValidationError
 
 from accounts.models import User
-from profiles.models import Company
+from profiles.models import Company, Location
 
 # JOB_TYPE = (
 #     ('1', "Full time"),
@@ -37,6 +37,13 @@ TYPE_LEVEL = (
     ('3', "Senior"),
 )
 
+LANGUAGE_LEVEL = (
+    ('1', "Business"),
+    ('2', "Advanced"),
+    ('3', "Native"),
+)
+
+
 # Categories
 class Category(models.Model):
     title    = models.CharField(max_length=150)
@@ -55,6 +62,18 @@ class Category(models.Model):
 
 #     def __str__(self):
 #         return self.title
+
+# Language
+class Language(models.Model):
+    title   = models.CharField(max_length=150)
+
+# Experience
+class Experience(models.Model):
+    title   = models.CharField(max_length=150)
+
+# Education
+class Education(models.Model):
+    title   = models.CharField(max_length=150)
 
 # Tasks
 class Task(models.Model):
@@ -101,7 +120,6 @@ class Hardskill(models.Model):
 class Type(models.Model):
     title               = models.CharField(max_length=150)
     slug                = models.SlugField(max_length=250, unique=True)
-    # level               = models.CharField(choices=TYPE_LEVEL, max_length=10, null=True)
     description         = models.TextField()
     category            = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     offers              = models.ManyToManyField(to='jobs.Offer')
@@ -144,11 +162,17 @@ class Job(models.Model):
     company             = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     description         = models.TextField()
     type                = models.ForeignKey(Type, on_delete=models.CASCADE)
-    # location            = models.ForeignKey(Location, on_delete=models.CASCADE)
-    offers              = models.ManyToManyField(to='jobs.Offer')
-    tasks               = models.ManyToManyField(to='jobs.Task')
+    salarymin           = models.IntegerField()
+    salarymax           = models.IntegerField(blank=True, null=True)
+    offers              = JSONField(null=True)
+    tasks               = JSONField(null=True)
+    education           = models.ForeignKey(Education, related_name="jobs", on_delete=models.CASCADE)
+    experience          = models.ManyToManyField(to='jobs.Experience', through='JobExperience')
     hardskills          = models.ManyToManyField(to='jobs.Hardskill', through='JobHardSkill')
     softskills          = models.ManyToManyField(to='jobs.Softskill', through='JobSoftSkill')
+    language            = models.ManyToManyField(to='jobs.Language', through='JobLanguage')
+    company             = models.ForeignKey(Company, on_delete=models.CASCADE)
+    location            = models.ForeignKey(Location, on_delete=models.CASCADE)
     active              = models.BooleanField(default=True)
     created_by          = models.ForeignKey(User, related_name="jobs", on_delete=models.CASCADE)
     created_at          = models.DateTimeField(auto_now_add=True)
@@ -162,6 +186,16 @@ class Job(models.Model):
     def __str__(self):
         return f"{self.type} ({self.company})"
 
+class JobExperience(models.Model):
+    job         = models.ForeignKey(Job, on_delete=models.CASCADE)
+    type        = models.ForeignKey(Type, on_delete=models.CASCADE)
+    experience  = models.ForeignKey(Experience, on_delete=models.CASCADE)
+
+
+class JobLanguage(models.Model):
+    job         = models.ForeignKey(Job, on_delete=models.CASCADE)
+    language    = models.ForeignKey(Language, on_delete=models.CASCADE)
+    level       = models.CharField(choices=LANGUAGE_LEVEL, max_length=10)
 
 class JobHardSkill(models.Model):
     job         = models.ForeignKey(Job, on_delete=models.CASCADE)

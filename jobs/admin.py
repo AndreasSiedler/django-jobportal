@@ -2,6 +2,15 @@ from django.contrib import admin
 from .models import *
 from django.template.defaultfilters import slugify
 
+# Language
+class LanguageAdmin(admin.ModelAdmin):
+    search_fields           = ('title',)
+
+
+# Education
+class EducationAdmin(admin.ModelAdmin):
+    search_fields           = ('title',)
+
 # Type
 class TypeHardSkillInline(admin.TabularInline):
     model                   = TypeHardSkill
@@ -43,12 +52,22 @@ class JobSoftSkillInline(admin.TabularInline):
     extra                   = 1 # how many rows to show
     autocomplete_fields     = ['skill']
 
+class JobExperienceInline(admin.TabularInline):
+    model                   = JobExperience
+    extra                   = 1
+    autocomplete_fields     = ['type']
+
+
+class JobLanguageInline(admin.TabularInline):
+    model                   = JobLanguage
+    extra                   = 1
+    autocomplete_fields     = ['language']
 
 class JobAdmin(admin.ModelAdmin):
-    inlines                 = (JobHardSkillInline, JobSoftSkillInline,)
-    fields                  = ('type', 'description', 'tasks', 'offers',)
-    autocomplete_fields     = ['type',]
-    filter_horizontal       = ('offers', 'tasks',)
+    inlines                 = (JobExperienceInline, JobHardSkillInline, JobSoftSkillInline, JobLanguageInline,)
+    fields                  = ('active', 'type', 'description', 'tasks', 'offers', 'salarymin', 'salarymax', 'education', 'company', 'location',)
+    autocomplete_fields     = ['type', 'education', 'company', 'location',]
+    # filter_horizontal       = ('offers',)
     readonly_fields         = ('id',)
 
     def save_model(self, request, obj, form, change):
@@ -104,6 +123,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
+admin.site.register(Education, EducationAdmin)
+admin.site.register(Language, LanguageAdmin)
 admin.site.register(Type, TypeAdmin)
 admin.site.register(Job, JobAdmin)
 admin.site.register(Offer, OfferAdmin)

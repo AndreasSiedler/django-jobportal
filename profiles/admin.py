@@ -3,14 +3,18 @@ from .models import Candidate, CandidateHardSkill, CandidateSoftSkill, Company, 
 
 # Company
 class CompanyAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug': ('title',)}
+    prepopulated_fields     = {'slug': ('title',)}
+    search_fields           = ('title',)
+
+# Location
+class LocationAdmin(admin.ModelAdmin):
+    search_fields           = ('title',)
 
 # Candidate
 class CandidateHardSkillInline(admin.TabularInline):
     model                   = CandidateHardSkill
     extra                   = 1 # how many rows to show
     autocomplete_fields     = ['skill']
-
 
 class CandidateSoftSkillInline(admin.TabularInline):
     model                   = CandidateSoftSkill
@@ -32,4 +36,4 @@ class CandidateAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Candidate, CandidateAdmin)
 admin.site.register(Company, CompanyAdmin)
-admin.site.register(Location)
+admin.site.register(Location, LocationAdmin)
