@@ -67,13 +67,22 @@ class Category(models.Model):
 class Language(models.Model):
     title   = models.CharField(max_length=150)
 
+    def __str__(self):
+        return f"{self.title}"
+
 # Experience
 class Experience(models.Model):
     title   = models.CharField(max_length=150)
 
+    def __str__(self):
+        return f"{self.title}"
+        
 # Education
 class Education(models.Model):
     title   = models.CharField(max_length=150)
+
+    def __str__(self):
+        return f"{self.title}"
 
 # Tasks
 class Task(models.Model):
@@ -124,9 +133,17 @@ class Type(models.Model):
     category            = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     offers              = models.ManyToManyField(to='jobs.Offer')
     tasks               = models.ManyToManyField(to='jobs.Task')
+    salarymin           = models.IntegerField()
+    salarymax           = models.IntegerField(blank=True, null=True)
+    education           = models.ForeignKey(Education, related_name="types", on_delete=models.CASCADE)
+    experience          = models.ManyToManyField('self', through='TypeExperience', symmetrical = False)
     hardskills          = models.ManyToManyField(to='jobs.Hardskill', through='TypeHardSkill')
     softskills          = models.ManyToManyField(to='jobs.Softskill', through='TypeSoftSkill')
-    created_at          = models.DateTimeField(default=timezone.now)
+    language            = models.ManyToManyField(to='jobs.Language', through='TypeLanguage')
+    active              = models.BooleanField(default=True)
+    created_by          = models.ForeignKey(User, related_name="types", on_delete=models.CASCADE)
+    created_at          = models.DateTimeField(auto_now_add=True)
+    updated_at          = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.title}"
@@ -135,6 +152,15 @@ class Type(models.Model):
     #     skill_level         = TYPE_LEVEL[index_skill_level][1]
     #     return f"{self.title} ({skill_level})"
 
+class TypeExperience(models.Model):
+    from_type        = models.ForeignKey(Type, related_name = 'from_type', on_delete=models.CASCADE)
+    to_type          = models.ForeignKey(Type, related_name = 'to_type', on_delete=models.CASCADE)
+    experience       = models.ForeignKey(Experience, on_delete=models.CASCADE)
+
+class TypeLanguage(models.Model):
+    type        = models.ForeignKey(Type, on_delete=models.CASCADE)
+    language    = models.ForeignKey(Language, on_delete=models.CASCADE)
+    level       = models.CharField(choices=LANGUAGE_LEVEL, max_length=10)
 
 class TypeHardSkill(models.Model):
     type        = models.ForeignKey(Type, on_delete=models.CASCADE)

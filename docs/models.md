@@ -19,7 +19,35 @@ Company
 Location
 
 CreatedBy
+CreatedAt
+UpdatedAt
 Active
+
+
+## Type Model
+
+Title
+Slug
+Description
+
+Category
+Tasks
+Offers
+
+sallarymin
+sallarymax
+
+education (predifend) (select)
+experience (predefined) (select)
+
+skills (predefined) (multiselect)
+language (predefined (multiselect)
+
+CreatedBy
+CreatedAt
+UpdatedAt
+Active
+
 
 
 ## Candidate Model
