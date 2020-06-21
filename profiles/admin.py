@@ -1,10 +1,21 @@
 from django.contrib import admin
 from .models import Candidate, CandidateHardSkill, CandidateSoftSkill, Company, Location
+from django.template.defaultfilters import slugify
+
 
 # Company
 class CompanyAdmin(admin.ModelAdmin):
-    prepopulated_fields     = {'slug': ('title',)}
+    # prepopulated_fields     = {'slug': ('title',)}
+    autocomplete_fields     = ('user',)
     search_fields           = ('title',)
+    readonly_fields         = ('slug', 'created_by',)
+    list_display            = ('title', 'slug',)
+
+    def save_model(self, request, obj, form, change):
+        obj.slug            = f"{slugify(form.cleaned_data['title'])}"
+        if getattr(obj, 'created_by', None) is None:
+            obj.created_by = request.user
+        obj.save()
 
 # Location
 class LocationAdmin(admin.ModelAdmin):

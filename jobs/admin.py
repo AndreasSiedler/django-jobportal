@@ -38,22 +38,20 @@ class TypeLanguageInline(admin.TabularInline):
 class TypeAdmin(admin.ModelAdmin):
     inlines                 = (TypeExperienceInline, TypeSoftSkillInline, TypeHardSkillInline, TypeLanguageInline,)
     # prepopulated_fields     = {'slug': ('title', 'level')}
-    fields                  = ('active', 'title', 'slug', 'description', 'category', 'tasks', 'offers', 'salarymin', 'salarymax', 'education', 'created_by')
+    fields                  = ('active', 'user', 'title', 'slug', 'description', 'category', 'tasks', 'offers', 'salarymin', 'salarymax', 'education', 'created_by')
     filter_horizontal       = ('offers', 'tasks',)
-    autocomplete_fields     = ('education',)
+    autocomplete_fields     = ('education', 'user',)
     search_fields           = ('title',)
-    readonly_fields         = ('slug',)
+    readonly_fields         = ('slug', 'created_by',)
     list_display            = ('title', 'category', 'slug',)
-
 
     def save_model(self, request, obj, form, change):
         # index_skill_level   = int(form.cleaned_data['level']) - 1
         # skill_level         = TYPE_LEVEL[index_skill_level][1]
         # obj.slug            = f"{slugify(form.cleaned_data['title'])}-{slugify(skill_level)}"
-        print(request.user)
         obj.slug            = f"{slugify(form.cleaned_data['title'])}"
         if getattr(obj, 'created_by', None) is None:
-            obj.user = request.user
+            obj.created_by = request.user
         obj.save()
 
 
@@ -88,8 +86,8 @@ class JobAdmin(admin.ModelAdmin):
     readonly_fields         = ('id',)
 
     def save_model(self, request, obj, form, change):
-        if getattr(obj, 'user', None) is None:
-            obj.user = request.user
+        if getattr(obj, 'created_by', None) is None:
+            obj.created_by = request.user
         obj.save()
 
 
@@ -136,6 +134,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
+admin.site.register(Experience)
 admin.site.register(Education, EducationAdmin)
 admin.site.register(Language, LanguageAdmin)
 admin.site.register(Type, TypeAdmin)

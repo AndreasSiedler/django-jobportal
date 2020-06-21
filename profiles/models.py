@@ -63,16 +63,21 @@ class CandidateSoftSkill(models.Model):
 
 # Companies
 class Company(models.Model):   
-    user            = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
+    user            = models.ForeignKey('accounts.User', related_name="companies", on_delete=models.CASCADE)
     title           = models.CharField(max_length=100)
     slug            = models.SlugField(max_length=100)
     logo            = models.ImageField(upload_to=upload_image_path, null=True, blank=True)
-    description     = models.CharField(max_length=300)
+    description     = models.TextField()
     website         = models.CharField(max_length=100)
-    created_at      = models.DateTimeField(default=timezone.now)
+    created_by          = models.ForeignKey('accounts.User', on_delete=models.CASCADE, editable=False)
+    created_at          = models.DateTimeField(auto_now_add=True)
+    updated_at          = models.DateTimeField(auto_now=True)
     
     class Meta:
         verbose_name_plural = "companies"
+    
+    def __str__(self):
+        return f"{self.title}"
 
 # Locations
 class Location(models.Model):   

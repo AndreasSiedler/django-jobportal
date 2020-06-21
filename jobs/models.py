@@ -127,6 +127,7 @@ class Hardskill(models.Model):
 
 # Types
 class Type(models.Model):
+    user                = models.ForeignKey(User, related_name="types", on_delete=models.CASCADE)
     title               = models.CharField(max_length=150)
     slug                = models.SlugField(max_length=250, unique=True)
     description         = models.TextField()
@@ -141,7 +142,7 @@ class Type(models.Model):
     softskills          = models.ManyToManyField(to='jobs.Softskill', through='TypeSoftSkill')
     language            = models.ManyToManyField(to='jobs.Language', through='TypeLanguage')
     active              = models.BooleanField(default=True)
-    created_by          = models.ForeignKey(User, related_name="types", on_delete=models.CASCADE)
+    created_by          = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
     created_at          = models.DateTimeField(auto_now_add=True)
     updated_at          = models.DateTimeField(auto_now=True)
 
@@ -204,13 +205,9 @@ class Job(models.Model):
     created_at          = models.DateTimeField(auto_now_add=True)
     updated_at          = models.DateTimeField(auto_now=True)
 
-    def save(self, request, *args, **kwargs):
-        if self.user is None:
-            self.user = request.user
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return f"{self.type} ({self.company})"
+
 
 class JobExperience(models.Model):
     job         = models.ForeignKey(Job, on_delete=models.CASCADE)
