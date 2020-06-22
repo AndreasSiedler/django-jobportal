@@ -186,6 +186,7 @@ class TypeSoftSkill(models.Model):
 
 # Jobs
 class Job(models.Model):
+    user                = models.ForeignKey(User, related_name="jobs", on_delete=models.CASCADE)
     company             = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
     description         = models.TextField()
     type                = models.ForeignKey(Type, on_delete=models.CASCADE)
@@ -201,7 +202,7 @@ class Job(models.Model):
     company             = models.ForeignKey(Company, on_delete=models.CASCADE)
     location            = models.ForeignKey(Location, on_delete=models.CASCADE)
     active              = models.BooleanField(default=True)
-    created_by          = models.ForeignKey(User, related_name="jobs", on_delete=models.CASCADE)
+    created_by          = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at          = models.DateTimeField(auto_now_add=True)
     updated_at          = models.DateTimeField(auto_now=True)
 

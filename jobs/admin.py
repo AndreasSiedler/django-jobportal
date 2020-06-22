@@ -80,10 +80,10 @@ class JobLanguageInline(admin.TabularInline):
 
 class JobAdmin(admin.ModelAdmin):
     inlines                 = (JobExperienceInline, JobHardSkillInline, JobSoftSkillInline, JobLanguageInline,)
-    fields                  = ('active', 'type', 'description', 'tasks', 'offers', 'salarymin', 'salarymax', 'education', 'company', 'location',)
-    autocomplete_fields     = ['type', 'education', 'company', 'location',]
+    fields                  = ('active', 'user', 'type', 'description', 'tasks', 'offers', 'salarymin', 'salarymax', 'education', 'company', 'location', 'created_by',)
+    autocomplete_fields     = ['user', 'type', 'education', 'company', 'location',]
     # filter_horizontal       = ('offers',)
-    readonly_fields         = ('id',)
+    readonly_fields         = ('id', 'created_by',)
 
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'created_by', None) is None:

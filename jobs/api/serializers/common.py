@@ -2,6 +2,13 @@ from rest_framework import (serializers, filters)
 from ...models import *
 from profiles.api.serializers.nested import CompanySerializer
 
+# Education
+class EducationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model   = Education
+        fields  = ("id", "title",)
+
+
 # Task
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,9 +19,12 @@ class TaskSerializer(serializers.ModelSerializer):
 class TypeSerializer(serializers.ModelSerializer):
 
     tasks = TaskSerializer(many=True)
+    education = EducationSerializer()
     class Meta:
         model   = Type
-        fields  = ("id", "title", "category", "tasks", "description",)
+        fields  = ('id', 'title', 'description', 'tasks', 'offers', 'salarymin', 'salarymax', 'education', 'experience', 'hardskills', 'softskills', 'language', )
+        read_only_fields = ('created_at','updated_at')
+        # depth = 2
 
 
 # Hardskill
@@ -26,13 +36,13 @@ class HardskillSerializer(serializers.ModelSerializer):
 # Job
 class JobSerializer(serializers.ModelSerializer):
 
-    company = CompanySerializer(read_only=True)
+    # company = CompanySerializer()
     # profile = serializers.StringRelatedField()
     # location = serializers.StringRelatedField()
     
     class Meta:
         model   = Job
-        fields  = ("company", )
+        fields  = ('id', 'active', 'type', 'description', 'tasks', 'offers', 'salarymin', 'salarymax', 'education', 'company', 'location',)
         read_only_fields = ('created_at','updated_at')
 
 

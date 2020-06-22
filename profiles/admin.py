@@ -9,7 +9,7 @@ class CompanyAdmin(admin.ModelAdmin):
     autocomplete_fields     = ('user',)
     search_fields           = ('title',)
     readonly_fields         = ('slug', 'created_by',)
-    list_display            = ('title', 'slug',)
+    list_display            = ('id', 'title', 'slug',)
 
     def save_model(self, request, obj, form, change):
         obj.slug            = f"{slugify(form.cleaned_data['title'])}"
