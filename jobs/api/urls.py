@@ -1,5 +1,5 @@
 from django.urls import path
-from jobs.api.views import JobListView, TaskListView, JobView, TypeListView, TypeView, EducationListView
+from jobs.api.views import JobListView, TaskListView, OfferListView, JobView, TypeListView, TypeView, EducationListView
 
 urlpatterns = [
     # Jobs
@@ -10,6 +10,10 @@ urlpatterns = [
     path("types/<int:pk>/", TypeView.as_view(), name="type-detail"),
     # Tasks
     path("tasks/", TaskListView.as_view(), name="task-list"),
+    # Offers
+    path("offers/", OfferListView.as_view(), name="offer-list"),
+    # Experience
+    # path("type-experience/", TypeExperienceListView.as_view(), name="type-experience-list"),
     # Education
     path("education/", EducationListView.as_view(), name="education-list"),
 ]

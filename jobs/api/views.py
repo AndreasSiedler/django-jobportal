@@ -23,6 +23,19 @@ class TaskListView(generics.ListAPIView):
     # search_fields = ['title', 'category',]
     search_fields = ['title']
 
+# Offers
+class OfferListView(generics.ListAPIView):
+    queryset = Offer.objects.all()
+    serializer_class = OfferSerializer
+    filter_backends = [filters.SearchFilter]
+    search_field = ['title']
+
+# Experience
+# class TypeExperienceListView(generics.ListAPIView):
+#     queryset = TypeExperience.objects.all()
+#     serializer_class = TypeExperienceSerializer
+
+
 # Types
 class TypeListView(generics.ListAPIView):
     queryset = Type.objects.all()

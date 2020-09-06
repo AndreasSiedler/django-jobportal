@@ -137,7 +137,7 @@ class Type(models.Model):
     salarymin           = models.IntegerField()
     salarymax           = models.IntegerField(blank=True, null=True)
     education           = models.ForeignKey(Education, related_name="types", on_delete=models.CASCADE)
-    experience          = models.ManyToManyField('self', through='TypeExperience', symmetrical = False)
+    experience          = models.ManyToManyField('self', related_name="type_experience", through='TypeExperience', symmetrical = False)
     hardskills          = models.ManyToManyField(to='jobs.Hardskill', through='TypeHardSkill')
     softskills          = models.ManyToManyField(to='jobs.Softskill', through='TypeSoftSkill')
     language            = models.ManyToManyField(to='jobs.Language', through='TypeLanguage')
@@ -146,16 +146,17 @@ class Type(models.Model):
     created_at          = models.DateTimeField(auto_now_add=True)
     updated_at          = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"{self.title}"
+    # def __str__(self):
+    #     return f"{self.title}"
     # def __str__(self):
     #     index_skill_level   = int(self.level) - 1
     #     skill_level         = TYPE_LEVEL[index_skill_level][1]
     #     return f"{self.title} ({skill_level})"
 
 class TypeExperience(models.Model):
-    from_type        = models.ForeignKey(Type, related_name = 'from_type', on_delete=models.CASCADE)
     to_type          = models.ForeignKey(Type, related_name = 'to_type', on_delete=models.CASCADE)
+    # Selected Value
+    from_type        = models.ForeignKey(Type, related_name = 'from_type', on_delete=models.CASCADE)
     experience       = models.ForeignKey(Experience, on_delete=models.CASCADE)
 
 class TypeLanguage(models.Model):
