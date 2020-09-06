@@ -2,19 +2,60 @@ from rest_framework import (serializers, filters)
 from ...models import *
 from profiles.api.serializers.nested import CompanySerializer
 
+# Education
+class EducationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model   = Education
+        fields  = ("id", "title",)
+
+
 # Task
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model   = Task
         fields  = ("id", "title",)
 
+# Offer
+class OfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model   = Offer
+        fields  = ("id", "title",)
+
+# Experience
+# class ExperienceSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model   = Experience
+#         fields  = ("id", "title",)
+
+class TypeExperienceSerializer(serializers.ModelSerializer):
+    type_title = serializers.ReadOnlyField(source='from_type.title')
+    type_id = serializers.ReadOnlyField(source='from_type.id')
+    experience = serializers.ReadOnlyField(source='experience.title')
+    experience_id = serializers.ReadOnlyField(source='experience.id')
+    class Meta:
+        model   = TypeExperience
+        fields  = ('id', 'type_title', 'type_id', 'experience', 'experience_id',)
+
 # Type
 class TypeSerializer(serializers.ModelSerializer):
 
+    offers = OfferSerializer(many=True)
     tasks = TaskSerializer(many=True)
+    # experience = TypeExperienceSerializer(source='type_experience', many=True)
+    experience = TypeExperienceSerializer(source='to_type', many=True)
+    # experience = serializers.SerializerMethodField()
+    education = EducationSerializer()
     class Meta:
         model   = Type
-        fields  = ("id", "title", "category", "tasks", "description",)
+        fields  = ('id', 'title', 'description', 'tasks', 'offers', 'salarymin', 'salarymax', 'education', 'experience', 'hardskills', 'softskills', 'language', )
+        read_only_fields = ('created_at','updated_at')
+        # depth = 2
+
+    # def get_experience(self, obj):
+    #     print(obj)
+    #     "obj is a Member instance. Returns list of dicts"""
+    #     qset = TypeExperience.objects.filter(to_type=obj)
+    #     return [TypeExperienceSerializer(m).data for m in qset]
 
 
 # Hardskill
@@ -26,13 +67,13 @@ class HardskillSerializer(serializers.ModelSerializer):
 # Job
 class JobSerializer(serializers.ModelSerializer):
 
-    company = CompanySerializer(read_only=True)
+    # company = CompanySerializer()
     # profile = serializers.StringRelatedField()
     # location = serializers.StringRelatedField()
     
     class Meta:
         model   = Job
-        fields  = ("company", )
+        fields  = ('id', 'active', 'type', 'description', 'tasks', 'offers', 'salarymin', 'salarymax', 'education', 'company', 'location',)
         read_only_fields = ('created_at','updated_at')
 
 

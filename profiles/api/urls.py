@@ -8,4 +8,6 @@ urlpatterns = [
     # Candidate
     path("candidates/", CandidateListView.as_view(), name="candidate-list"),
     path("candidates/<int:pk>/", CandidateView.as_view(), name="candidate-detail"),
+    # UserCompany
+    path("usercompanies/", UserCompanyListView.as_view(), name="usercompany-list"),
 ]

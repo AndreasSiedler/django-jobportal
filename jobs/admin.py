@@ -2,7 +2,22 @@ from django.contrib import admin
 from .models import *
 from django.template.defaultfilters import slugify
 
+# Language
+class LanguageAdmin(admin.ModelAdmin):
+    search_fields           = ('title',)
+
+
+# Education
+class EducationAdmin(admin.ModelAdmin):
+    search_fields           = ('title',)
+
 # Type
+class TypeExperienceInline(admin.TabularInline):
+    model                   = TypeExperience
+    fk_name                 = "to_type"
+    extra                   = 1
+
+
 class TypeHardSkillInline(admin.TabularInline):
     model                   = TypeHardSkill
     extra                   = 1 # how many rows to show
@@ -14,21 +29,30 @@ class TypeSoftSkillInline(admin.TabularInline):
     extra                   = 1 # how many rows to show
     autocomplete_fields     = ['skill']
 
+class TypeLanguageInline(admin.TabularInline):
+    model                   = TypeLanguage
+    extra                   = 1
+    autocomplete_fields     = ['language']
+
 
 class TypeAdmin(admin.ModelAdmin):
-    inlines                 = (TypeSoftSkillInline, TypeHardSkillInline,)
+    inlines                 = (TypeExperienceInline, TypeSoftSkillInline, TypeHardSkillInline, TypeLanguageInline,)
     # prepopulated_fields     = {'slug': ('title', 'level')}
+    fields                  = ('active', 'user', 'title', 'slug', 'description', 'category', 'tasks', 'offers', 'salarymin', 'salarymax', 'education', 'created_by')
     filter_horizontal       = ('offers', 'tasks',)
+    autocomplete_fields     = ('education', 'user',)
     search_fields           = ('title',)
-    # readonly_fields         = ('slug',)
+    readonly_fields         = ('slug', 'created_by',)
     list_display            = ('title', 'category', 'slug',)
 
-
-    # def save_model(self, request, obj, form, change):
-    #     index_skill_level   = int(form.cleaned_data['level']) - 1
-    #     skill_level         = TYPE_LEVEL[index_skill_level][1]
-    #     obj.slug            = f"{slugify(form.cleaned_data['title'])}-{slugify(skill_level)}"
-    #     obj.save()
+    def save_model(self, request, obj, form, change):
+        # index_skill_level   = int(form.cleaned_data['level']) - 1
+        # skill_level         = TYPE_LEVEL[index_skill_level][1]
+        # obj.slug            = f"{slugify(form.cleaned_data['title'])}-{slugify(skill_level)}"
+        obj.slug            = f"{slugify(form.cleaned_data['title'])}"
+        if getattr(obj, 'created_by', None) is None:
+            obj.created_by = request.user
+        obj.save()
 
 
 # Jobs
@@ -43,23 +67,29 @@ class JobSoftSkillInline(admin.TabularInline):
     extra                   = 1 # how many rows to show
     autocomplete_fields     = ['skill']
 
+class JobExperienceInline(admin.TabularInline):
+    model                   = JobExperience
+    extra                   = 1
+    autocomplete_fields     = ['type']
+
+
+class JobLanguageInline(admin.TabularInline):
+    model                   = JobLanguage
+    extra                   = 1
+    autocomplete_fields     = ['language']
 
 class JobAdmin(admin.ModelAdmin):
-    inlines                 = (JobHardSkillInline, JobSoftSkillInline,)
-    # fields                  = ('title', 'description', 'location', 'tasks', 'offers', 'company',)
-    autocomplete_fields     = ['type',]
-    filter_horizontal       = ('offers', 'tasks',)
-    readonly_fields         = ('id',)
+    inlines                 = (JobExperienceInline, JobHardSkillInline, JobSoftSkillInline, JobLanguageInline,)
+    fields                  = ('active', 'user', 'type', 'description', 'tasks', 'offers', 'salarymin', 'salarymax', 'education', 'company', 'location', 'created_by',)
+    autocomplete_fields     = ['user', 'type', 'education', 'company', 'location',]
+    # filter_horizontal       = ('offers',)
+    readonly_fields         = ('id', 'created_by',)
 
     def save_model(self, request, obj, form, change):
-        if getattr(obj, 'user', None) is None:
-            obj.user = request.user
+        if getattr(obj, 'created_by', None) is None:
+            obj.created_by = request.user
         obj.save()
 
-# Title
-# class TitleAdmin(admin.ModelAdmin):
-#     prepopulated_fields = {'slug': ('title',)}
-#     search_fields       = ('title',)
 
 # Offer
 class OfferAdmin(admin.ModelAdmin):
@@ -104,6 +134,9 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
+admin.site.register(Experience)
+admin.site.register(Education, EducationAdmin)
+admin.site.register(Language, LanguageAdmin)
 admin.site.register(Type, TypeAdmin)
 admin.site.register(Job, JobAdmin)
 admin.site.register(Offer, OfferAdmin)
