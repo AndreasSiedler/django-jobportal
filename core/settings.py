@@ -99,9 +99,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'djangojobportal',
+        'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'mysecretpassword',
+        'PASSWORD': 'postgres',
         'HOST': 'db', # "db" in production && "localhost" when dev without docker postgres
         'PORT': 5432,
     }
